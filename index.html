@@ -140,7 +140,7 @@
   .tab input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
   .match-note{background:#fff3ec;border-left:4px solid var(--accent);padding:12px 14px;font-size:14px;margin-bottom:18px;border-radius:4px}
   .hp{position:absolute;left:-9999px}
-  input.invalid,textarea.invalid{border-color:#d93025;background:#fff5f5}
+  input.invalid,textarea.invalid,input[type=file].invalid{border-color:#d93025;background:#fff5f5}
   .form-msg.ok{background:#ecf8ef;border-color:#a8dbb4}
   button:disabled{opacity:.7;cursor:wait}
   .form-msg{display:none;margin-top:16px;padding:14px;border-radius:4px;background:#fff3ec;border:1px solid #f4c3a8;font-size:14px}
@@ -398,7 +398,7 @@
             <div class="field"><label for="otherCo">Other company · 对方公司</label><input id="otherCo" name="Competitor company" placeholder="Company name"></div>
             <div class="field"><label for="otherPrice">Their price · 对方报价 ($)</label><input id="otherPrice" name="Competitor price" inputmode="decimal" placeholder="e.g. 450"></div>
           </div>
-          <div class="field"><label for="quoteFile">Upload their quote · 上传报价单 <small>(photo or PDF, optional)</small></label><input id="quoteFile" name="attachment" type="file" accept="image/*,.pdf"></div>
+          <div class="field"><label for="quoteFile">Upload their quote · 上传报价单 <small>(photo or PDF, max 3 MB, optional)</small></label><input id="quoteFile" name="attachment" type="file" accept="image/*,.pdf"></div>
         </div>
         <div class="field"><label for="req" id="reqLabel">Describe the problem · 简单描述 *</label><textarea id="req" name="Message" required placeholder="Tell us what's wrong with your door"></textarea></div>
         <input type="text" name="_honey" id="honey" class="hp" tabindex="-1" autocomplete="off">
@@ -467,6 +467,15 @@
   form.querySelectorAll('input[name="Request type"]').forEach(r=>r.addEventListener('change',syncType));
   syncType();
   form.addEventListener('input',e=>e.target.classList.remove('invalid'));
+  document.getElementById('quoteFile').addEventListener('change',e=>{
+    const fi=e.target, m=document.getElementById('formMsg'), file=fi.files[0];
+    fi.classList.remove('invalid'); m.classList.remove('show');
+    if(file && file.size>3*1024*1024){
+      fi.value=''; fi.classList.add('invalid');
+      m.textContent='That file is '+(file.size/1048576).toFixed(1)+' MB. Please choose one under 3 MB. 文件超过 3MB，请选择较小的文件。';
+      m.classList.add('show');
+    }
+  });
   const readFile=f=>new Promise((ok,bad)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(',')[1]);r.onerror=bad;r.readAsDataURL(f);});
   form.addEventListener('submit',async e=>{
     e.preventDefault();
@@ -483,8 +492,8 @@
       msg.classList.add('show'); return;
     }
     const f=isMatch()?document.getElementById('quoteFile').files[0]:null;
-    if(f && f.size>5*1024*1024){
-      msg.textContent='The file is too large (max 5 MB). 文件太大（最大 5MB）。';
+    if(f && f.size>3*1024*1024){
+      msg.textContent='The file is too large (max 3 MB). Please choose a smaller photo. 文件太大（最大 3MB），请选择较小的图片。';
       msg.classList.add('show'); return;
     }
     const fail=()=>openModal(false);
