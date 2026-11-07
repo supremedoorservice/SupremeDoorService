@@ -473,18 +473,8 @@
             <label><input type="radio" name="opener" value="Wall-mount opener"><span>Wall-mount<small>侧挂式</small></span></label>
           </div>
         </fieldset>
-        <fieldset>
-          <legend><span>8</span>Extras · 附加 <small>(optional)</small></legend>
-          <div class="chips multi">
-            <label><input type="checkbox" name="extras" value="Remove & haul away old door"><span>Remove old door<small>拆除旧门</small></span></label>
-            <label><input type="checkbox" name="extras" value="Wi-Fi / smartphone control"><span>Wi-Fi / app<small>手机控制</small></span></label>
-            <label><input type="checkbox" name="extras" value="Outside keypad"><span>Keypad<small>密码键盘</small></span></label>
-            <label><input type="checkbox" name="extras" value="Extra remotes"><span>Extra remotes<small>遥控器</small></span></label>
-            <label><input type="checkbox" name="extras" value="New weather seal"><span>Weather seal<small>密封条</small></span></label>
-          </div>
-        </fieldset>
         <fieldset class="cfg-contact">
-          <legend><span>9</span>Your info · 联系方式</legend>
+          <legend><span>8</span>Your info · 联系方式</legend>
           <div class="row">
             <div class="field"><label for="cfgName">Name · 姓名 *</label><input id="cfgName" placeholder="Your name"></div>
             <div class="field"><label for="cfgPhone">Phone · 电话 *</label><input id="cfgPhone" type="tel" placeholder="408-555-0123"></div>
@@ -916,8 +906,7 @@
   const cfgRows=st=>[
     ['Size · 尺寸',`${st.w}' × ${st.h}'${st.custom?' (custom)':''}`],
     ['Style · 款式',st.style],['Material · 材质',st.material],['Color · 颜色',st.color],
-    ['Windows · 窗户',st.windows],['Window size · 窗户尺寸',st.windows==='No windows'?'—':st.winsize],['Insulation · 保温',st.insulation],['Opener · 开门机',st.opener],
-    ['Extras · 附加',st.extras.length?st.extras.join(', '):'None']];
+    ['Windows · 窗户',st.windows],['Window size · 窗户尺寸',st.windows==='No windows'?'—':st.winsize],['Insulation · 保温',st.insulation],['Opener · 开门机',st.opener]];
   const escH=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   function cfgUpdate(){
     document.getElementById('customSize').classList.toggle('show',pick('size')==='custom');
