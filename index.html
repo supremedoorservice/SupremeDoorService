@@ -755,6 +755,14 @@
       `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="${dk(.28)}" stroke-width=".8"/>`);
     const joints=()=>{let g='';for(let r=1;r<rows;r++){const y=y0+r*rh;g+=`<line x1="${x0}" y1="${y-.8}" x2="${x0+W}" y2="${y-.8}" stroke="${dk(.16)}" stroke-width="1"/><line x1="${x0}" y1="${y+.5}" x2="${x0+W}" y2="${y+.5}" stroke="${lt(LUM>0.6?.55:.18)}" stroke-width="1"/>`;}return g;};
     const win=st.windows.startsWith('Top'), deco=st.windows==='Top row, decorative';
+    // window slots are always the size of a long-panel opening
+    const LC=Math.max(1,Math.round(st.w/4.2)), LCW=W/LC, LMX=LCW*0.045, LMY=rh*0.16;
+    const longWin=(r,c)=>{
+      const x=x0+c*LCW+LMX, y=y0+r*rh+LMY, w=LCW-2*LMX, h=rh-2*LMY;
+      let g=glassPane(x+1,y+1,w-2,h-2);
+      if(deco){ for(let k=1;k<4;k++) g+=`<path d="M${x+w*k/4} ${y}v${h}" stroke="${base}" stroke-width="${Math.max(1.6,w*0.035)}"/>`; g+=`<path d="M${x} ${y+h/2}h${w}" stroke="${base}" stroke-width="1.6"/>`; }
+      return g;
+    };
 
     if(st.style==='Full-view glass'){
       const cols=Math.max(3,Math.round(st.w/2.3)), cw=W/cols, fr=Math.max(3,W*0.013);
@@ -799,7 +807,7 @@
         const mx=cw*(long?0.045:0.085), my=rh*0.16;
         for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
           const x=x0+c*cw+mx, y=y0+r*rh+my, w=cw-2*mx, h=rh-2*my;
-          if(r===0&&win){ b+=glassPane(x+1,y+1,w-2,h-2); if(deco){const n=long?4:2;for(let k=1;k<n;k++) b+=`<path d="M${x+w*k/n} ${y}v${h}" stroke="${base}" stroke-width="${Math.max(1.6,w*0.035/(long?1:0.6))}"/>`; b+=`<path d="M${x} ${y+h/2}h${w}" stroke="${base}" stroke-width="1.6"/>`;} }
+          if(r===0&&win){ if(c===0) for(let k=0;k<LC;k++) b+=longWin(0,k); }
           else {
             // embossed steel panel (matches stamped steel doors): outer stamped edge, narrow flat band, thin bevel, large flat field
             const e=Math.max(.5,h*0.035), band=Math.max(.5,h*0.05), bv=Math.max(.7,h*0.065);
@@ -825,12 +833,9 @@
         b+=`<rect x="${x0}" y="${y0}" width="${W}" height="${H}" filter="url(#${p}mot)" opacity="${LUM>0.6?.55:.10}"/>`;
         const side=st.windows.startsWith('Left')?'L':st.windows.startsWith('Right')?'R':'';
         if(side){
-          const ww=Math.min(W*0.14,H*0.2), mx=Math.max(4,W*0.035), wh=rh*0.62;
-          const wx=side==='L'?x0+mx:x0+W-mx-ww;
-          for(let r=0;r<rows;r++) b+=glassPane(wx,y0+r*rh+(rh-wh)/2,ww,wh);
+          for(let r=0;r<rows;r++) b+=longWin(r,side==='L'?0:LC-1);
         } else if(win){
-          const n=Math.max(2,Math.round(st.w/2.1)), cw=W/n, wy=y0+rh*0.28, wh=rh*0.44;
-          for(let c=0;c<n;c++){ b+=glassPane(x0+c*cw+cw*0.12,wy,cw*0.76,wh); if(deco) b+=`<path d="M${x0+c*cw+cw/2} ${wy}v${wh}" stroke="${base}" stroke-width="2"/>`; }
+          for(let k=0;k<LC;k++) b+=longWin(0,k);
         }
       }
       b+=joints();
