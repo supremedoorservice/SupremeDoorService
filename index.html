@@ -446,7 +446,7 @@
   document.querySelectorAll('nav a').forEach(a=>a.addEventListener('click',()=>document.getElementById('nav').classList.remove('open')));
 
   // Request form — sends to a Google Apps Script in the business Gmail, which emails supremedoorservice@gmail.com
-  const SCRIPT_URL = ''; // paste the Apps Script web app URL here
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyiXgWiBDB5XKnQt0pyO05R5YYpJ0XW70kZxPVGp1MspfrcSHzcLE-TsdY65mJon0n47Q/exec';
   const form=document.getElementById('quoteForm');
   const isMatch=()=>form.querySelector('input[name="Request type"]:checked').value==='Quote match';
   const syncType=()=>{
