@@ -144,6 +144,17 @@
   .form-msg{display:none;margin-top:16px;padding:14px;border-radius:4px;background:#fff3ec;border:1px solid #f4c3a8;font-size:14px}
   .form-msg.show{display:block}
 
+  .modal{position:fixed;inset:0;z-index:100;background:rgba(20,24,31,.65);display:none;align-items:center;justify-content:center;padding:20px}
+  .modal.open{display:flex}
+  .modal-card{background:#fff;border-radius:12px;max-width:440px;width:100%;padding:36px 32px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.35);animation:pop .25s ease-out}
+  @keyframes pop{from{transform:scale(.92);opacity:0}to{transform:none;opacity:1}}
+  .modal-card h3{font-size:26px;margin:16px 0 18px}
+  .modal-card h3 span{font-size:18px;color:#555e6b}
+  .modal-days{background:#fff3ec;border:2px solid var(--accent);border-radius:8px;padding:14px;font-size:16px;margin-bottom:16px}
+  .modal-days b{color:var(--accent-dark);font-size:18px}
+  .modal-card p{font-size:14px;color:#555e6b;margin-bottom:22px}
+  .modal-card a{color:var(--ink)}
+  .modal-card .btn{min-width:160px}
   footer{background:var(--ink);color:var(--muted);font-size:14px;padding:28px 0}
   footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
 
@@ -422,6 +433,16 @@
   <span>Lic # 1126041 · 408-461-1483 · 小红书 95967556428</span>
 </div></footer>
 
+<div class="modal" id="sentModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-card">
+    <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="32" fill="#1f9d55"/><path d="M18 33l9 9 19-20" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <h3 id="modalTitle">Request received!<br><span>已收到您的请求</span></h3>
+    <div class="modal-days">Your request will be processed within <b>3 days</b>.<br>我们将在 <b>3 天内</b> 处理您的请求。</div>
+    <p>We'll contact you by phone or email. For urgent repairs, call <a href="tel:4084611483"><b>408-461-1483</b></a>.<br>如需紧急维修，请直接致电。</p>
+    <button class="btn" id="modalOk" type="button">OK · 好的</button>
+  </div>
+</div>
+
 <a class="mobile-call" href="tel:4084611483"><svg width="18" height="18"><use href="#phone"/></svg>Call 408-461-1483</a>
 
 <script>
@@ -457,14 +478,33 @@
     document.getElementById('subj').value=`${t} — ${v('name')}${v('city')?' ('+v('city')+')':''}`;
     document.getElementById('nextUrl').value=location.href.split('#')[0]+'#thanks';
     const b=document.getElementById('sendBtn'); b.textContent='Sending… 提交中'; b.disabled=true;
+    msg.classList.remove('show');
+    // With a file attached, use a normal form post (attachments need it); FormSubmit redirects back to #thanks
+    if(f) return;
+    // Otherwise send in the background so the customer stays on the page
+    e.preventDefault();
+    const data=new FormData(form); data.delete('attachment');
+    fetch('https://formsubmit.co/ajax/supremedoorservice@gmail.com',{method:'POST',headers:{Accept:'application/json'},body:data})
+      .then(r=>r.json())
+      .then(res=>{
+        if(String(res.success)==='true'){ form.reset(); syncType(); openModal(); }
+        else throw new Error(res.message||'failed');
+      })
+      .catch(()=>{
+        msg.innerHTML='Sorry, your request could not be sent. Please call <b>408-461-1483</b> or email <b>supremedoorservice@gmail.com</b>. 提交失败，请致电或发邮件联系我们。';
+        msg.classList.add('show');
+      })
+      .finally(()=>{ b.textContent='Send request · 提交'; b.disabled=false; });
   });
-  // Thank-you banner after FormSubmit redirects back
-  if(location.hash==='#thanks'){
-    const msg=document.getElementById('formMsg');
-    msg.innerHTML='<b>Thank you! 谢谢！</b> We received your request and will contact you soon. For urgent repairs call <b>408-461-1483</b>.';
-    msg.classList.add('show','ok');
-    document.getElementById('contact').scrollIntoView();
-  }
+
+  // Confirmation pop-up
+  const modal=document.getElementById('sentModal');
+  function openModal(){ modal.classList.add('open'); document.getElementById('modalOk').focus(); }
+  function closeModal(){ modal.classList.remove('open'); if(location.hash==='#thanks') history.replaceState(null,'',location.pathname); }
+  document.getElementById('modalOk').addEventListener('click',closeModal);
+  modal.addEventListener('click',e=>{ if(e.target===modal) closeModal(); });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+  if(location.hash==='#thanks'){ document.getElementById('contact').scrollIntoView(); openModal(); }
 </script>
 </body>
 </html>
