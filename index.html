@@ -128,6 +128,9 @@
   .swatches span{display:block;width:44px;height:44px;margin:0 auto 4px;border-radius:50%;border:2px solid #d4d0c8;box-shadow:inset 0 0 0 3px #fff;transition:.15s}
   .swatches input:checked+span{border-color:var(--accent);box-shadow:inset 0 0 0 3px #fff,0 0 0 2px var(--accent)}
   .swatches input:focus-visible+span{outline:2px solid var(--accent);outline-offset:3px}
+  .wood-swatches label{width:84px}
+  .wsw{overflow:hidden}
+  .wsw svg{display:block;width:100%;height:100%;border-radius:50%}
   .swatches small{font-size:11.5px;color:#555e6b;line-height:1.2;display:block}
   .cfg-contact .btn{width:100%}
   @media (max-width:960px){.cfg-grid{grid-template-columns:1fr}.cfg-preview{position:static}}
@@ -429,14 +432,26 @@
         </fieldset>
         <fieldset>
           <legend><span>4</span>Color · 颜色</legend>
-          <div class="swatches" id="swatches">
+          <div class="sub-label">Solid colors · 纯色</div>
+          <div class="swatches">
             <label title="White"><input type="radio" name="color" value="White" data-hex="#f4f4f1" checked><span style="background:#f4f4f1"></span><small>White 白</small></label>
             <label title="Almond"><input type="radio" name="color" value="Almond" data-hex="#e6dcc6"><span style="background:#e6dcc6"></span><small>Almond 杏</small></label>
             <label title="Sandtone"><input type="radio" name="color" value="Sandtone" data-hex="#c9b48f"><span style="background:#c9b48f"></span><small>Sandtone 沙</small></label>
             <label title="Gray"><input type="radio" name="color" value="Gray" data-hex="#8c9196"><span style="background:#8c9196"></span><small>Gray 灰</small></label>
             <label title="Brown"><input type="radio" name="color" value="Brown" data-hex="#5b3d2b"><span style="background:#5b3d2b"></span><small>Brown 棕</small></label>
             <label title="Black"><input type="radio" name="color" value="Black" data-hex="#24262a"><span style="background:#24262a"></span><small>Black 黑</small></label>
-            <label title="Walnut wood"><input type="radio" name="color" value="Walnut wood finish" data-hex="#7a4f2e" data-wood="1"><span style="background:repeating-linear-gradient(90deg,#7a4f2e 0 4px,#6a4226 4px 6px)"></span><small>Walnut 胡桃木</small></label>
+          </div>
+          <div class="sub-label" style="margin-top:16px">Woodtones · 木纹色</div>
+          <div class="swatches wood-swatches">
+            <label title="Painted Woodtones (Classic)"><input type="radio" name="color" value="Painted Woodtones (Classic) (woodtone)" data-hex="#604133" data-grain="#44281b" data-light="#6d4e40" data-wood="1"><span class="wsw"></span><small>Painted Woodtones (Classic)<br>经典木纹漆</small></label>
+            <label title="Painted Woodtones (Modern)"><input type="radio" name="color" value="Painted Woodtones (Modern) (woodtone)" data-hex="#451a0a" data-grain="#220401" data-light="#572b19" data-wood="1"><span class="wsw"></span><small>Painted Woodtones (Modern)<br>现代木纹漆</small></label>
+            <label title="Carbon Oak"><input type="radio" name="color" value="Carbon Oak (woodtone)" data-hex="#515355" data-grain="#3c3e40" data-light="#616365" data-wood="1"><span class="wsw"></span><small>Carbon Oak<br>碳灰橡木</small></label>
+            <label title="Mahogany"><input type="radio" name="color" value="Mahogany (woodtone)" data-hex="#5b3e30" data-grain="#361b10" data-light="#705144" data-wood="1"><span class="wsw"></span><small>Mahogany<br>桃花心木</small></label>
+            <label title="Cedar"><input type="radio" name="color" value="Cedar (woodtone)" data-hex="#a07040" data-grain="#764e25" data-light="#aa7946" data-wood="1" data-fine="1"><span class="wsw"></span><small>Cedar<br>雪松</small></label>
+            <label title="Dark Oak"><input type="radio" name="color" value="Dark Oak (woodtone)" data-hex="#634a3c" data-grain="#452f24" data-light="#755948" data-wood="1"><span class="wsw"></span><small>Dark Oak<br>深橡木</small></label>
+            <label title="Driftwood"><input type="radio" name="color" value="Driftwood (woodtone)" data-hex="#7a7165" data-grain="#5c5449" data-light="#857d70" data-wood="1"><span class="wsw"></span><small>Driftwood<br>浮木灰</small></label>
+            <label title="Walnut"><input type="radio" name="color" value="Walnut (woodtone)" data-hex="#2f221b" data-grain="#1c120c" data-light="#3d3028" data-wood="1"><span class="wsw"></span><small>Walnut<br>胡桃木</small></label>
+            <label title="Natural Oak"><input type="radio" name="color" value="Natural Oak (woodtone)" data-hex="#c5b090" data-grain="#a99373" data-light="#cfba9b" data-wood="1"><span class="wsw"></span><small>Natural Oak<br>原色橡木</small></label>
           </div>
         </fieldset>
         <fieldset>
@@ -730,10 +745,22 @@
     else [w,h]=sz.split('x').map(Number);
     w=Math.min(20,Math.max(6,w)); h=Math.min(10,Math.max(6,h));
     const col=cfgForm.querySelector('input[name="color"]:checked');
-    return {w,h,custom:sz==='custom',style:pick('style'),material:pick('material'),color:col.value,hex:col.dataset.hex,wood:!!col.dataset.wood,
+    return {w,h,custom:sz==='custom',style:pick('style'),material:pick('material'),color:col.value,hex:col.dataset.hex,wood:!!col.dataset.wood,grain:col.dataset.grain||'#2a160b',light:col.dataset.light||'#ffffff',fine:!!col.dataset.fine,
       windows:pick('windows'),winsize:pick('winsize')||'Long windows',insulation:pick('insulation'),opener:pick('opener'),
       extras:[...cfgForm.querySelectorAll('input[name="extras"]:checked')].map(e=>e.value)};
   };
+  const rgb01=h=>{const n=parseInt(h.slice(1),16);return [(n>>16)/255,(n>>8&255)/255,(n&255)/255].map(v=>v.toFixed(3));};
+  function woodFilters(p,st){
+    const g=rgb01(st.grain||'#2a160b'), l=rgb01(st.light||'#ffffff'), f=st.fine?'0.004 0.75':'0.008 0.30';
+    return `<filter id="${p}wood" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency="${f}" numOctaves="3" seed="9"/><feColorMatrix type="matrix" values="0 0 0 0 ${g[0]}  0 0 0 0 ${g[1]}  0 0 0 0 ${g[2]}  0 0 0 2.2 -.95"/></filter>`+
+      `<filter id="${p}woodL" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency="${f}" numOctaves="2" seed="23"/><feColorMatrix type="matrix" values="0 0 0 0 ${l[0]}  0 0 0 0 ${l[1]}  0 0 0 0 ${l[2]}  0 0 0 2 -.9"/></filter>`;
+  }
+  // woodtone swatch circles
+  document.querySelectorAll('.wood-swatches label').forEach((lab,i)=>{
+    const d=lab.querySelector('input').dataset, p='sw'+i+'_';
+    const st={grain:d.grain,light:d.light,fine:!!d.fine};
+    lab.querySelector('.wsw').innerHTML=`<svg viewBox="0 0 44 44"><defs>${woodFilters(p,st)}</defs><rect width="44" height="44" fill="${d.hex}"/><rect width="44" height="44" filter="url(#${p}woodL)" opacity=".45"/><rect width="44" height="44" filter="url(#${p}wood)" opacity=".9"/></svg>`;
+  });
   let _uid=0;
   // Draws a door at (x0,y0) size W×H in px. Returns {defs, body}.
   function doorArt(st,x0,y0,W,H){
@@ -745,12 +772,12 @@
       <linearGradient id="${p}lit" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".06"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".06"/></linearGradient>
       <linearGradient id="${p}side" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000" stop-opacity=".05"/><stop offset=".3" stop-color="#000" stop-opacity="0"/><stop offset=".7" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".06"/></linearGradient>
       <linearGradient id="${p}glass" x1="0" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#e3eef6"/><stop offset=".35" stop-color="#9fb9cc"/><stop offset=".7" stop-color="#5f7d94"/><stop offset="1" stop-color="#3f586b"/></linearGradient>
-      <filter id="${p}wood" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency="0.01 0.32" numOctaves="3" seed="9"/><feColorMatrix type="matrix" values="0 0 0 0 .12  0 0 0 0 .06  0 0 0 0 .02  0 0 0 1.6 -.62"/></filter>
+      ${woodFilters(p,st)}
       <filter id="${p}tex" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="3"/><feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.2 .75"/></filter>
       <filter id="${p}mot" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency="0.012 0.03" numOctaves="2" seed="5"/><feColorMatrix type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .9 -.35"/></filter>
       <filter id="${p}sh" x="-10%" y="-10%" width="130%" height="130%"><feDropShadow dx="1.2" dy="1.6" stdDeviation="1" flood-color="#000" flood-opacity=".35"/></filter>`;
     let b=`<g clip-path="url(#${p}clip)"><rect x="${x0}" y="${y0}" width="${W}" height="${H}" fill="${base}"/>`;
-    if(st.wood) b+=`<rect x="${x0}" y="${y0}" width="${W}" height="${H}" filter="url(#${p}wood)" opacity=".85"/>`;
+    if(st.wood) b+=`<rect x="${x0}" y="${y0}" width="${W}" height="${H}" filter="url(#${p}woodL)" opacity=".45"/><rect x="${x0}" y="${y0}" width="${W}" height="${H}" filter="url(#${p}wood)" opacity=".9"/>`;
     else if(st.style!=='Full-view glass') b+=`<rect x="${x0}" y="${y0}" width="${W}" height="${H}" filter="url(#${p}tex)" opacity=".045"/>`;
     const glassPane=(x,y,w,h,frame)=>{
       let g=`<rect x="${x-1.5}" y="${y-1.5}" width="${w+3}" height="${h+3}" fill="${dk(.45)}"/>`;
