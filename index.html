@@ -757,10 +757,11 @@
     const win=st.windows.startsWith('Top'), deco=st.windows==='Top row, decorative';
     // window slots are always the size of a long-panel opening
     const LC=Math.max(1,Math.round(st.w/4.2)), LCW=W/LC, LMX=LCW*0.045, LMY=rh*0.16;
-    const longWin=(r,c)=>{
-      const x=x0+c*LCW+LMX, y=y0+r*rh+LMY, w=LCW-2*LMX, h=rh-2*LMY;
+    const longWin=(r,c,span=1,maxW=Infinity,alignRight=false)=>{
+      let w=Math.min(span*LCW-2*LMX,maxW), x=x0+c*LCW+LMX; if(alignRight) x=x0+(c+span)*LCW-LMX-w;
+      const y=y0+r*rh+LMY, h=rh-2*LMY;
       let g=glassPane(x+1,y+1,w-2,h-2);
-      if(deco){ for(let k=1;k<4;k++) g+=`<path d="M${x+w*k/4} ${y}v${h}" stroke="${base}" stroke-width="${Math.max(1.6,w*0.035)}"/>`; g+=`<path d="M${x} ${y+h/2}h${w}" stroke="${base}" stroke-width="1.6"/>`; }
+      if(deco){ for(let k=1;k<4;k++) g+=`<path d="M${x+w*k/4} ${y}v${h}" stroke="${base}" stroke-width="${Math.max(1.6,Math.min(3,w*0.025))}"/>`; g+=`<path d="M${x} ${y+h/2}h${w}" stroke="${base}" stroke-width="1.6"/>`; }
       return g;
     };
 
@@ -833,9 +834,12 @@
         b+=`<rect x="${x0}" y="${y0}" width="${W}" height="${H}" filter="url(#${p}mot)" opacity="${LUM>0.6?.55:.10}"/>`;
         const side=st.windows.startsWith('Left')?'L':st.windows.startsWith('Right')?'R':'';
         if(side){
-          for(let r=0;r<rows;r++) b+=longWin(r,side==='L'?0:LC-1);
+          // modern flush windows are double the long-panel width
+          const sp=Math.min(2,LC);
+          for(let r=0;r<rows;r++) b+=side==='L'?longWin(r,0,sp,W*0.55):longWin(r,LC-sp,sp,W*0.55,true);
         } else if(win){
-          for(let k=0;k<LC;k++) b+=longWin(0,k);
+          const sp=Math.min(2,LC);
+          for(let k=0;k+sp<=LC;k+=sp) b+=longWin(0,k,sp);
         }
       }
       b+=joints();
