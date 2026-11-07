@@ -140,6 +140,7 @@
   .tab input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
   .match-note{background:#fff3ec;border-left:4px solid var(--accent);padding:12px 14px;font-size:14px;margin-bottom:18px;border-radius:4px}
   .hp{position:absolute;left:-9999px}
+  input.invalid,textarea.invalid{border-color:#d93025;background:#fff5f5}
   .form-msg.ok{background:#ecf8ef;border-color:#a8dbb4}
   button:disabled{opacity:.7;cursor:wait}
   .form-msg{display:none;margin-top:16px;padding:14px;border-radius:4px;background:#fff3ec;border:1px solid #f4c3a8;font-size:14px}
@@ -461,18 +462,24 @@
     const t=form.querySelector('input[name="Request type"]:checked').value;
     document.getElementById('matchFields').style.display=isMatch()?'block':'none';
     document.getElementById('matchNote').style.display=isMatch()?'block':'none';
-    document.getElementById('reqLabel').textContent = t==='Question' ? 'Your question · 问题 *' : (isMatch()?'Anything else we should know · 补充说明 *':'Describe the problem · 简单描述 *');
+    document.getElementById('reqLabel').textContent = t==='Question' ? 'Your question · 问题 *' : (isMatch()?'Anything else we should know · 补充说明 (optional)':'Describe the problem · 简单描述 *');
   };
   form.querySelectorAll('input[name="Request type"]').forEach(r=>r.addEventListener('change',syncType));
   syncType();
+  form.addEventListener('input',e=>e.target.classList.remove('invalid'));
   const readFile=f=>new Promise((ok,bad)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(',')[1]);r.onerror=bad;r.readAsDataURL(f);});
   form.addEventListener('submit',async e=>{
     e.preventDefault();
     const msg=document.getElementById('formMsg');
     const v=id=>document.getElementById(id).value.trim();
     msg.classList.remove('show');
-    if(!v('name')||!v('phone')||!v('req')){
-      msg.textContent='Please fill in your name, phone and message. 请填写姓名、电话和描述。';
+    form.querySelectorAll('.invalid').forEach(el=>el.classList.remove('invalid'));
+    const need=['name','phone'].concat(isMatch()?[]:['req']).filter(id=>!v(id));
+    if(need.length){
+      need.forEach(id=>document.getElementById(id).classList.add('invalid'));
+      document.getElementById(need[0]).focus();
+      document.getElementById(need[0]).scrollIntoView({block:'center',behavior:'smooth'});
+      msg.textContent='Please fill in the highlighted fields. 请填写标红的栏目。';
       msg.classList.add('show'); return;
     }
     const f=isMatch()?document.getElementById('quoteFile').files[0]:null;
