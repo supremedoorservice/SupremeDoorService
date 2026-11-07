@@ -405,9 +405,7 @@
           <div class="chips" data-group="style">
             <label><input type="radio" name="style" value="Raised short panel" checked><span>Short panel<small>短凸板</small></span></label>
             <label><input type="radio" name="style" value="Raised long panel"><span>Long panel<small>长凸板</small></span></label>
-            <label><input type="radio" name="style" value="Carriage house"><span>Carriage house<small>马车房</small></span></label>
             <label><input type="radio" name="style" value="Modern flush"><span>Modern flush<small>现代平板</small></span></label>
-            <label><input type="radio" name="style" value="Full-view glass"><span>Full-view glass<small>全景玻璃</small></span></label>
           </div>
         </fieldset>
         <fieldset>
@@ -727,15 +725,15 @@
     const dk=a=>`rgba(0,0,0,${a})`, lt=a=>`rgba(255,255,255,${a})`;
     const rows=4, rh=H/rows;
     let defs=`<clipPath id="${p}clip"><rect x="${x0}" y="${y0}" width="${W}" height="${H}"/></clipPath>
-      <linearGradient id="${p}lit" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".22"/></linearGradient>
-      <linearGradient id="${p}side" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000" stop-opacity=".10"/><stop offset=".3" stop-color="#000" stop-opacity="0"/><stop offset=".7" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".12"/></linearGradient>
+      <linearGradient id="${p}lit" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".06"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".06"/></linearGradient>
+      <linearGradient id="${p}side" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000" stop-opacity=".05"/><stop offset=".3" stop-color="#000" stop-opacity="0"/><stop offset=".7" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".06"/></linearGradient>
       <linearGradient id="${p}glass" x1="0" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#e3eef6"/><stop offset=".35" stop-color="#9fb9cc"/><stop offset=".7" stop-color="#5f7d94"/><stop offset="1" stop-color="#3f586b"/></linearGradient>
       <filter id="${p}wood" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency="0.01 0.32" numOctaves="3" seed="9"/><feColorMatrix type="matrix" values="0 0 0 0 .12  0 0 0 0 .06  0 0 0 0 .02  0 0 0 1.6 -.62"/></filter>
       <filter id="${p}tex" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="3"/><feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.2 .75"/></filter>
       <filter id="${p}sh" x="-10%" y="-10%" width="130%" height="130%"><feDropShadow dx="1.2" dy="1.6" stdDeviation="1" flood-color="#000" flood-opacity=".35"/></filter>`;
     let b=`<g clip-path="url(#${p}clip)"><rect x="${x0}" y="${y0}" width="${W}" height="${H}" fill="${base}"/>`;
     if(st.wood) b+=`<rect x="${x0}" y="${y0}" width="${W}" height="${H}" filter="url(#${p}wood)" opacity=".85"/>`;
-    else if(st.style!=='Full-view glass') b+=`<rect x="${x0}" y="${y0}" width="${W}" height="${H}" filter="url(#${p}tex)" opacity=".07"/>`;
+    else if(st.style!=='Full-view glass') b+=`<rect x="${x0}" y="${y0}" width="${W}" height="${H}" filter="url(#${p}tex)" opacity=".045"/>`;
     const glassPane=(x,y,w,h,frame)=>{
       let g=`<rect x="${x-1.5}" y="${y-1.5}" width="${w+3}" height="${h+3}" fill="${dk(.45)}"/>`;
       g+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#${p}glass)"/>`;
@@ -751,7 +749,7 @@
       `<polygon points="${x+w},${y} ${x+w},${y+h} ${x+w-bv},${y+h-bv} ${x+w-bv},${y+bv}" fill="${dk(.20)}"/>`+
       `<rect x="${x+bv}" y="${y+bv}" width="${w-2*bv}" height="${h-2*bv}" fill="${lt(.05)}"/>`+
       `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="${dk(.28)}" stroke-width=".8"/>`);
-    const joints=()=>{let g='';for(let r=1;r<rows;r++){const y=y0+r*rh;g+=`<line x1="${x0}" y1="${y-.8}" x2="${x0+W}" y2="${y-.8}" stroke="${dk(.45)}" stroke-width="1.6"/><line x1="${x0}" y1="${y+.9}" x2="${x0+W}" y2="${y+.9}" stroke="${lt(.45)}" stroke-width="1"/>`;}return g;};
+    const joints=()=>{let g='';for(let r=1;r<rows;r++){const y=y0+r*rh;g+=`<line x1="${x0}" y1="${y-.8}" x2="${x0+W}" y2="${y-.8}" stroke="${dk(.16)}" stroke-width="1"/><line x1="${x0}" y1="${y+.5}" x2="${x0+W}" y2="${y+.5}" stroke="${lt(.55)}" stroke-width="1"/>`;}return g;};
     const win=st.windows!=='No windows', deco=st.windows==='Top row, decorative';
 
     if(st.style==='Full-view glass'){
@@ -791,17 +789,31 @@
     } else {
       if(st.style.startsWith('Raised')){
         const long=st.style==='Raised long panel';
+        const n0=parseInt(base.slice(1),16), lum=(0.299*(n0>>16)+0.587*(n0>>8&255)+0.114*(n0&255))/255, k=lum>0.6?1:0.35+0.4*lum;
+        const lt=a=>`rgba(255,255,255,${(a*k).toFixed(3)})`;
         const cols=long?Math.max(1,Math.round(st.w/4.2)):Math.max(2,Math.round(st.w/2.1)), cw=W/cols;
-        const mx=cw*(long?0.055:0.1), my=rh*0.17;
+        const mx=cw*(long?0.045:0.085), my=rh*0.16;
         for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
           const x=x0+c*cw+mx, y=y0+r*rh+my, w=cw-2*mx, h=rh-2*my;
           if(r===0&&win){ b+=glassPane(x+1,y+1,w-2,h-2); if(deco){const n=long?4:2;for(let k=1;k<n;k++) b+=`<path d="M${x+w*k/n} ${y}v${h}" stroke="${base}" stroke-width="${Math.max(1.6,w*0.035/(long?1:0.6))}"/>`; b+=`<path d="M${x} ${y+h/2}h${w}" stroke="${base}" stroke-width="1.6"/>`;} }
           else {
-            // recessed rim + raised field with bevel (like an embossed steel panel)
-            const rim=Math.max(1,h*0.05);
-            b+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${dk(.06)}" stroke="${dk(.22)}" stroke-width=".7"/>`;
-            b+=`<line x1="${x}" y1="${y+h+.6}" x2="${x+w}" y2="${y+h+.6}" stroke="${lt(.5)}" stroke-width=".8"/>`;
-            b+=bevel(x+rim,y+rim,w-2*rim,h-2*rim,Math.max(1.5,h*0.11));
+            // embossed steel panel (matches stamped steel doors): outer stamped edge, narrow flat band, thin bevel, large flat field
+            const e=Math.max(.5,h*0.035), band=Math.max(.5,h*0.05), bv=Math.max(.7,h*0.065);
+            // outer stamped edge: shadow top/left, highlight bottom/right (recessed)
+            b+=`<path d="M${x} ${y+h}V${y}H${x+w}" fill="none" stroke="${dk(.22)}" stroke-width="${e}"/>`;
+            b+=`<path d="M${x} ${y+h}H${x+w}V${y}" fill="none" stroke="${lt(.85)}" stroke-width="${e}"/>`;
+            // band
+            const bx=x+e, by=y+e, bw=w-2*e, bh=h-2*e;
+            b+=`<rect x="${bx}" y="${by}" width="${bw}" height="${bh}" fill="${dk(.03)}"/>`;
+            // raised field bevel
+            const ix=bx+band, iy=by+band, iw=bw-2*band, ih=bh-2*band;
+            b+=`<polygon points="${ix},${iy} ${ix+iw},${iy} ${ix+iw-bv},${iy+bv} ${ix+bv},${iy+bv}" fill="${lt(.75)}"/>`;
+            b+=`<polygon points="${ix},${iy} ${ix+bv},${iy+bv} ${ix+bv},${iy+ih-bv} ${ix},${iy+ih}" fill="${lt(.45)}"/>`;
+            b+=`<polygon points="${ix},${iy+ih} ${ix+bv},${iy+ih-bv} ${ix+iw-bv},${iy+ih-bv} ${ix+iw},${iy+ih}" fill="${dk(.20)}"/>`;
+            b+=`<polygon points="${ix+iw},${iy} ${ix+iw},${iy+ih} ${ix+iw-bv},${iy+ih-bv} ${ix+iw-bv},${iy+bv}" fill="${dk(.12)}"/>`;
+            b+=`<rect x="${ix}" y="${iy}" width="${iw}" height="${ih}" fill="none" stroke="${dk(.18)}" stroke-width=".6"/>`;
+            b+=`<rect x="${ix+bv}" y="${iy+bv}" width="${iw-2*bv}" height="${ih-2*bv}" fill="${lt(.07)}"/>`;
+            b+=`<path d="M${ix+bv} ${iy+ih-bv}H${ix+iw-bv}V${iy+bv}" fill="none" stroke="${lt(.6)}" stroke-width=".6"/>`;
           }
         }
       } else if(st.style==='Modern flush'){
@@ -818,7 +830,7 @@
     return {defs,body:b};
   }
   function drawDoor(st){
-    const S=17, W=st.w*S, H=st.h*S, x0=(400-W)/2, y0=246-H, cas=9;
+    const S=Math.min(330/st.w,200/st.h), W=st.w*S, H=st.h*S, x0=(400-W)/2, y0=246-H, cas=9;
     const art=doorArt(st,x0,y0,W,H);
     let g=`<defs>${art.defs}
       <linearGradient id="wallG" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ddd6c8"/><stop offset=".5" stop-color="#ebe5da"/><stop offset="1" stop-color="#d8d1c3"/></linearGradient>
