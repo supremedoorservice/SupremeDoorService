@@ -908,6 +908,8 @@
     document.getElementById('customSize').classList.toggle('show',pick('size')==='custom');
     const flush=pick('style')==='Modern flush';
     const shortOk=pick('style')==='Raised short panel';
+    // default the window size to match the panel: short panel -> short windows
+    if(pick('style')!==cfgUpdate.lastStyle){ cfgForm.querySelector(`input[name="winsize"][value="${shortOk?'Short':'Long'} windows"]`).checked=true; cfgUpdate.lastStyle=pick('style'); }
     cfgForm.querySelectorAll('.short-only').forEach(l=>{ l.style.display=shortOk?'':'none'; if(!shortOk&&l.querySelector('input').checked) cfgForm.querySelector('input[name="winsize"][value="Long windows"]').checked=true; });
     cfgForm.querySelectorAll('.flush-only').forEach(l=>{ l.style.display=flush?'':'none'; if(!flush&&l.querySelector('input').checked) cfgForm.querySelector('input[name="windows"][value="No windows"]').checked=true; });
     document.getElementById('winSizeRow').style.display=pick('windows')==='No windows'?'none':'';
