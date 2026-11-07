@@ -129,6 +129,18 @@
   textarea{min-height:120px;resize:vertical}
   .row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
   form .btn{width:100%}
+  select{width:100%;font:inherit;font-size:15px;padding:12px 14px;border:1px solid #d4d0c8;border-radius:4px;background:#faf9f7}
+  input[type=file]{padding:9px;background:#fff}
+  .tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
+  .tab input{position:absolute;opacity:0;pointer-events:none}
+  .tab span{display:block;text-align:center;padding:10px 6px;border:2px solid #d4d0c8;border-radius:6px;cursor:pointer;font-weight:600;font-size:14px;line-height:1.3;transition:.15s}
+  .tab span small{font-weight:500;color:#6b7380}
+  .tab input:checked+span{border-color:var(--accent);background:#fff3ec;color:var(--accent-dark)}
+  .tab input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
+  .match-note{background:#fff3ec;border-left:4px solid var(--accent);padding:12px 14px;font-size:14px;margin-bottom:18px;border-radius:4px}
+  .hp{position:absolute;left:-9999px}
+  .form-msg.ok{background:#ecf8ef;border-color:#a8dbb4}
+  button:disabled{opacity:.7;cursor:wait}
   .form-msg{display:none;margin-top:16px;padding:14px;border-radius:4px;background:#fff3ec;border:1px solid #f4c3a8;font-size:14px}
   .form-msg.show{display:block}
 
@@ -343,14 +355,45 @@
           </div>
         </div>
       </div>
-      <form id="quoteForm" novalidate>
-        <div class="row">
-          <div class="field"><label for="name">Name · 姓名</label><input id="name" required placeholder="Your name"></div>
-          <div class="field"><label for="info">Contact Info · 联系方式</label><input id="info" required placeholder="Phone or email"></div>
+      <form id="quoteForm" action="https://formsubmit.co/supremedoorservice@gmail.com" method="POST" enctype="multipart/form-data">
+        <div class="tabs" role="radiogroup" aria-label="Request type">
+          <label class="tab"><input type="radio" name="Request type" value="Free quote" checked><span>Free quote<br><small>免费报价</small></span></label>
+          <label class="tab"><input type="radio" name="Request type" value="Quote match"><span>Quote match<br><small>比价</small></span></label>
+          <label class="tab"><input type="radio" name="Request type" value="Question"><span>Question<br><small>咨询</small></span></label>
         </div>
-        <div class="field"><label for="city">City · 城市</label><input id="city" placeholder="e.g. San Jose"></div>
-        <div class="field"><label for="req">Request · 简单描述</label><textarea id="req" required placeholder="Tell us what's wrong with your door"></textarea></div>
-        <button class="btn" type="submit">Send</button>
+        <p class="match-note" id="matchNote">Got a quote from another company? Send it to us and we'll review it and get back to you with our price. 收到别家报价？发给我们比一比。</p>
+        <div class="row">
+          <div class="field"><label for="name">Name · 姓名 *</label><input id="name" name="Name" required placeholder="Your name"></div>
+          <div class="field"><label for="phone">Phone · 电话 *</label><input id="phone" name="Phone" type="tel" required placeholder="408-555-0123"></div>
+        </div>
+        <div class="row">
+          <div class="field"><label for="email">Email · 邮箱</label><input id="email" name="email" type="email" placeholder="you@example.com"></div>
+          <div class="field"><label for="city">City · 城市</label><input id="city" name="City" placeholder="e.g. San Jose"></div>
+        </div>
+        <div class="field"><label for="service">Service · 服务</label>
+          <select id="service" name="Service">
+            <option>Garage door repair · 维修</option>
+            <option>Spring replacement · 换弹簧</option>
+            <option>Garage door replacement · 换门</option>
+            <option>Garage door opener · 开门机</option>
+            <option>Maintenance · 保养</option>
+            <option>Other · 其他</option>
+          </select>
+        </div>
+        <div class="match-fields" id="matchFields">
+          <div class="row">
+            <div class="field"><label for="otherCo">Other company · 对方公司</label><input id="otherCo" name="Competitor company" placeholder="Company name"></div>
+            <div class="field"><label for="otherPrice">Their price · 对方报价 ($)</label><input id="otherPrice" name="Competitor price" inputmode="decimal" placeholder="e.g. 450"></div>
+          </div>
+          <div class="field"><label for="quoteFile">Upload their quote · 上传报价单 <small>(photo or PDF, optional)</small></label><input id="quoteFile" name="attachment" type="file" accept="image/*,.pdf"></div>
+        </div>
+        <div class="field"><label for="req" id="reqLabel">Describe the problem · 简单描述 *</label><textarea id="req" name="Message" required placeholder="Tell us what's wrong with your door"></textarea></div>
+        <input type="hidden" name="_subject" id="subj" value="New website inquiry">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_next" id="nextUrl" value="">
+        <input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off">
+        <button class="btn" type="submit" id="sendBtn">Send request · 提交</button>
         <div class="form-msg" id="formMsg"></div>
       </form>
     </div>
@@ -385,20 +428,43 @@
   // Close mobile menu on link click
   document.querySelectorAll('nav a').forEach(a=>a.addEventListener('click',()=>document.getElementById('nav').classList.remove('open')));
 
-  // Quote form: builds an email to the business (no backend yet)
-  document.getElementById('quoteForm').addEventListener('submit',e=>{
-    e.preventDefault();
-    const v = id => document.getElementById(id).value.trim();
-    const msg = document.getElementById('formMsg');
-    if(!v('name')||!v('info')||!v('req')){
-      msg.textContent='Please fill in your name, contact info and a short description. 请填写姓名、联系方式和简单描述。';
+  // Request form — posts to FormSubmit, which emails supremedoorservice@gmail.com
+  const form=document.getElementById('quoteForm');
+  const isMatch=()=>form.querySelector('input[name="Request type"]:checked').value==='Quote match';
+  const syncType=()=>{
+    const t=form.querySelector('input[name="Request type"]:checked').value;
+    document.getElementById('matchFields').style.display=isMatch()?'block':'none';
+    document.getElementById('matchNote').style.display=isMatch()?'block':'none';
+    document.getElementById('reqLabel').textContent = t==='Question' ? 'Your question · 问题 *' : (isMatch()?'Anything else we should know · 补充说明 *':'Describe the problem · 简单描述 *');
+  };
+  form.querySelectorAll('input[name="Request type"]').forEach(r=>r.addEventListener('change',syncType));
+  syncType();
+  form.addEventListener('submit',e=>{
+    const msg=document.getElementById('formMsg');
+    const v=id=>document.getElementById(id).value.trim();
+    if(!v('name')||!v('phone')||!v('req')){
+      e.preventDefault();
+      msg.textContent='Please fill in your name, phone and message. 请填写姓名、电话和描述。';
       msg.classList.add('show'); return;
     }
-    const body = `Name: ${v('name')}\nContact: ${v('info')}\nCity: ${v('city')}\n\nRequest:\n${v('req')}`;
-    const href = 'mailto:supremedoorservice@gmail.com?subject=' + encodeURIComponent('Quote request from '+v('name')) + '&body=' + encodeURIComponent(body);
-    msg.innerHTML = `Thanks! To send your request, <a href="${href}">open it in your email app</a>, or call us at <b>408-461-1483</b>. Our email is <b>supremedoorservice@gmail.com</b>.`;
-    msg.classList.add('show');
+    const f=document.getElementById('quoteFile').files[0];
+    if(f && f.size>5*1024*1024){
+      e.preventDefault();
+      msg.textContent='The file is too large (max 5 MB). 文件太大（最大 5MB）。';
+      msg.classList.add('show'); return;
+    }
+    const t=form.querySelector('input[name="Request type"]:checked').value;
+    document.getElementById('subj').value=`${t} — ${v('name')}${v('city')?' ('+v('city')+')':''}`;
+    document.getElementById('nextUrl').value=location.href.split('#')[0]+'#thanks';
+    const b=document.getElementById('sendBtn'); b.textContent='Sending… 提交中'; b.disabled=true;
   });
+  // Thank-you banner after FormSubmit redirects back
+  if(location.hash==='#thanks'){
+    const msg=document.getElementById('formMsg');
+    msg.innerHTML='<b>Thank you! 谢谢！</b> We received your request and will contact you soon. For urgent repairs call <b>408-461-1483</b>.';
+    msg.classList.add('show','ok');
+    document.getElementById('contact').scrollIntoView();
+  }
 </script>
 </body>
 </html>
