@@ -25,14 +25,17 @@
   .nav{display:flex;align-items:center;justify-content:space-between;height:72px;gap:16px}
   .brand{display:flex;align-items:center;gap:12px;text-decoration:none}
   .brand svg{flex:none}
-  .brand-name{font-family:Oswald,sans-serif;font-weight:700;font-size:20px;letter-spacing:.04em;line-height:1}
+  .brand-name{white-space:nowrap;font-family:Oswald,sans-serif;font-weight:700;font-size:20px;letter-spacing:.04em;line-height:1}
   .brand-sub{font-size:12px;color:var(--muted);margin-top:4px}
-  nav ul{display:flex;list-style:none;gap:28px}
-  nav a{text-decoration:none;font-family:Oswald,sans-serif;font-size:15px;letter-spacing:.08em;color:#d6dbe2;transition:color .15s}
+  nav ul{display:flex;list-style:none;gap:22px}
+  nav a{white-space:nowrap;text-decoration:none;font-family:Oswald,sans-serif;font-size:15px;letter-spacing:.08em;color:#d6dbe2;transition:color .15s}
   nav a:hover{color:var(--accent)}
   .call-btn{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#fff;text-decoration:none;font-family:Oswald,sans-serif;font-weight:600;letter-spacing:.04em;padding:10px 18px;border-radius:4px;white-space:nowrap}
   .call-btn:hover{background:var(--accent-dark)}
-  .menu-toggle{display:none;background:none;border:0;color:#fff;cursor:pointer}
+  .menu-toggle{display:none;background:none;border:0;color:#fff;cursor:pointer;padding:0;flex:none}
+  .brand{min-width:0}
+  .brand>div{min-width:0}
+  .brand-name{overflow:hidden;text-overflow:ellipsis}
 
   /* Hero */
   .hero{position:relative;background:var(--steel);color:var(--white);overflow:hidden}
@@ -83,6 +86,48 @@
   .stat{background:#fff;border:1px solid #e2ded6;border-radius:8px;padding:24px}
   .stat b{display:block;font-family:Oswald,sans-serif;font-size:34px;color:var(--accent);line-height:1}
   .stat span{font-size:14px;color:#555e6b}
+
+  /* Door configurator */
+  .config{background:var(--paper);border-top:1px solid #e2ded6}
+  .cfg-grid{display:grid;grid-template-columns:1fr 1.15fr;gap:40px;align-items:start}
+  .cfg-preview{position:sticky;top:96px}
+  .cfg-stage{background:linear-gradient(#cfd8e0,#e9eef2 70%);border-radius:10px;overflow:hidden;border:1px solid #d9d4ca}
+  .cfg-stage svg{display:block;width:100%;height:auto}
+  .cfg-summary{background:#fff;border:1px solid #e2ded6;border-radius:10px;padding:20px 22px;margin-top:16px}
+  .cfg-summary h3{font-size:18px;margin-bottom:10px}
+  .cfg-summary ul{list-style:none;font-size:14px}
+  .cfg-summary li{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px dashed #e2ded6}
+  .cfg-summary li:last-child{border:0}
+  .cfg-summary li b{color:#555e6b;font-weight:500}
+  .cfg-summary li span{text-align:right;font-weight:600}
+  .cfg-options{background:#fff;border:1px solid #e2ded6;border-radius:10px;padding:28px}
+  .cfg-options fieldset{border:0;padding:0 0 22px;margin-bottom:22px;border-bottom:1px solid #eee9e0}
+  .cfg-options fieldset:last-child{border:0;margin:0;padding:0}
+  .cfg-options legend{font-family:Oswald,"Noto Sans SC",sans-serif;text-transform:uppercase;letter-spacing:.04em;font-size:17px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+  .cfg-options legend span{width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;display:inline-grid;place-items:center;font-size:14px}
+  .cfg-options legend small{font-family:Inter,sans-serif;text-transform:none;font-weight:400;color:#6b7380;font-size:13px}
+  .chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
+  .chips label{position:relative;cursor:pointer}
+  .chips input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+  .chips span{display:block;padding:10px 8px;border:2px solid #d4d0c8;border-radius:6px;text-align:center;font-weight:600;font-size:14px;line-height:1.25;transition:.15s;background:#faf9f7}
+  .chips span small{display:block;font-weight:500;font-size:12px;color:#6b7380;margin-top:2px}
+  .chips label:hover span{border-color:#b9b3a8}
+  .chips input:checked+span{border-color:var(--accent);background:#fff3ec;color:var(--accent-dark)}
+  .chips input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
+  .custom-size{display:none;gap:12px;margin-top:12px;grid-template-columns:1fr 1fr}
+  .custom-size.show{display:grid}
+  .custom-size label{font-size:13px;font-weight:600}
+  .custom-size input{margin-top:4px}
+  .swatches{display:flex;flex-wrap:wrap;gap:8px}
+  .swatches label{position:relative;cursor:pointer;text-align:center;width:64px}
+  .swatches input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+  .swatches span{display:block;width:44px;height:44px;margin:0 auto 4px;border-radius:50%;border:2px solid #d4d0c8;box-shadow:inset 0 0 0 3px #fff;transition:.15s}
+  .swatches input:checked+span{border-color:var(--accent);box-shadow:inset 0 0 0 3px #fff,0 0 0 2px var(--accent)}
+  .swatches input:focus-visible+span{outline:2px solid var(--accent);outline-offset:3px}
+  .swatches small{font-size:11.5px;color:#555e6b;line-height:1.2;display:block}
+  .cfg-contact .btn{width:100%}
+  @media (max-width:960px){.cfg-grid{grid-template-columns:1fr}.cfg-preview{position:static}}
+  @media (max-width:760px){.cfg-options{padding:20px}.chips{grid-template-columns:repeat(2,1fr)}}
 
   /* Reviews */
   .reviews{background:#fff;border-top:1px solid #e2ded6}
@@ -172,7 +217,15 @@
     .hero-inner,.about-grid,.contact-grid{grid-template-columns:1fr}
     .services-grid{grid-template-columns:repeat(2,1fr)}
   }
+  @media (max-width:1150px){
+    nav{display:none;position:absolute;top:75px;left:0;right:0;background:var(--ink);padding:16px 24px;border-bottom:3px solid var(--accent)}
+    nav.open{display:block}
+    nav ul{flex-direction:column;gap:16px}
+    .menu-toggle{display:block}
+  }
   @media (max-width:760px){
+    .brand-name{font-size:16px}
+    .brand svg{width:34px;height:34px}
     nav{display:none;position:absolute;top:75px;left:0;right:0;background:var(--ink);padding:16px 24px;border-bottom:3px solid var(--accent)}
     nav.open{display:block}
     nav ul{flex-direction:column;gap:16px}
@@ -212,6 +265,7 @@
       <ul>
         <li><a href="#home">HOME</a></li>
         <li><a href="#services">SERVICES</a></li>
+        <li><a href="#configure">DOOR CONFIG</a></li>
         <li><a href="#contact">CONTACT US</a></li>
         <li><a href="#reviews">REVIEWS</a></li>
         <li><a href="#about">ABOUT</a></li>
@@ -307,6 +361,124 @@
         <div class="zh">保养</div>
         <p>Tune-ups, lubrication, balance and safety checks to keep your door quiet and reliable.</p>
       </div>
+    </div>
+  </div>
+</section>
+
+<section class="config" id="configure">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Design your door · 车库门定制</div>
+      <h2>Door configurations</h2>
+      <p>Pick the options you like, see a preview, and send it to us. We'll get back to you with a quote. 选择您喜欢的配置，提交后我们为您报价。</p>
+    </div>
+    <div class="cfg-grid">
+      <div class="cfg-preview">
+        <div class="cfg-stage">
+          <svg id="doorSvg" viewBox="0 0 400 270" role="img" aria-label="Door preview"></svg>
+        </div>
+        <div class="cfg-summary">
+          <h3>Your door · 您的配置</h3>
+          <ul id="cfgSummary"></ul>
+        </div>
+      </div>
+      <form class="cfg-options" id="cfgForm" novalidate>
+        <fieldset>
+          <legend><span>1</span>Size · 尺寸 <small>(width × height)</small></legend>
+          <div class="chips" data-group="size">
+            <label><input type="radio" name="size" value="8x7" checked><span>8' × 7'<small>Single · 单车位</small></span></label>
+            <label><input type="radio" name="size" value="9x7"><span>9' × 7'<small>Single · 单车位</small></span></label>
+            <label><input type="radio" name="size" value="10x7"><span>10' × 7'<small>Single · 单车位</small></span></label>
+            <label><input type="radio" name="size" value="16x7"><span>16' × 7'<small>Double · 双车位</small></span></label>
+            <label><input type="radio" name="size" value="16x8"><span>16' × 8'<small>Double · 双车位</small></span></label>
+            <label><input type="radio" name="size" value="custom"><span>Custom<small>自定义</small></span></label>
+          </div>
+          <div class="custom-size" id="customSize">
+            <label>Width · 宽 (ft)<input type="number" id="cW" min="6" max="20" step="0.5" value="12"></label>
+            <label>Height · 高 (ft)<input type="number" id="cH" min="6" max="10" step="0.5" value="7"></label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend><span>2</span>Style · 款式</legend>
+          <div class="chips" data-group="style">
+            <label><input type="radio" name="style" value="Raised panel" checked><span>Raised panel<small>凸板</small></span></label>
+            <label><input type="radio" name="style" value="Carriage house"><span>Carriage house<small>马车房</small></span></label>
+            <label><input type="radio" name="style" value="Modern flush"><span>Modern flush<small>现代平板</small></span></label>
+            <label><input type="radio" name="style" value="Full-view glass"><span>Full-view glass<small>全景玻璃</small></span></label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend><span>3</span>Material · 材质</legend>
+          <div class="chips" data-group="material">
+            <label><input type="radio" name="material" value="Steel" checked><span>Steel<small>钢</small></span></label>
+            <label><input type="radio" name="material" value="Aluminum"><span>Aluminum<small>铝</small></span></label>
+            <label><input type="radio" name="material" value="Wood"><span>Wood<small>实木</small></span></label>
+            <label><input type="radio" name="material" value="Wood-look composite"><span>Wood-look<small>仿木</small></span></label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend><span>4</span>Color · 颜色</legend>
+          <div class="swatches" id="swatches">
+            <label title="White"><input type="radio" name="color" value="White" data-hex="#f4f4f1" checked><span style="background:#f4f4f1"></span><small>White 白</small></label>
+            <label title="Almond"><input type="radio" name="color" value="Almond" data-hex="#e6dcc6"><span style="background:#e6dcc6"></span><small>Almond 杏</small></label>
+            <label title="Sandtone"><input type="radio" name="color" value="Sandtone" data-hex="#c9b48f"><span style="background:#c9b48f"></span><small>Sandtone 沙</small></label>
+            <label title="Gray"><input type="radio" name="color" value="Gray" data-hex="#8c9196"><span style="background:#8c9196"></span><small>Gray 灰</small></label>
+            <label title="Brown"><input type="radio" name="color" value="Brown" data-hex="#5b3d2b"><span style="background:#5b3d2b"></span><small>Brown 棕</small></label>
+            <label title="Black"><input type="radio" name="color" value="Black" data-hex="#24262a"><span style="background:#24262a"></span><small>Black 黑</small></label>
+            <label title="Walnut wood"><input type="radio" name="color" value="Walnut wood finish" data-hex="#7a4f2e" data-wood="1"><span style="background:repeating-linear-gradient(90deg,#7a4f2e 0 4px,#6a4226 4px 6px)"></span><small>Walnut 胡桃木</small></label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend><span>5</span>Windows · 窗户</legend>
+          <div class="chips" data-group="windows">
+            <label><input type="radio" name="windows" value="No windows" checked><span>None<small>无窗</small></span></label>
+            <label><input type="radio" name="windows" value="Top row, plain glass"><span>Top row<small>顶排玻璃</small></span></label>
+            <label><input type="radio" name="windows" value="Top row, decorative"><span>Decorative<small>装饰窗</small></span></label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend><span>6</span>Insulation · 保温</legend>
+          <div class="chips" data-group="insulation">
+            <label><input type="radio" name="insulation" value="Not insulated"><span>None<small>无保温</small></span></label>
+            <label><input type="radio" name="insulation" value="Standard insulation" checked><span>Standard<small>标准保温</small></span></label>
+            <label><input type="radio" name="insulation" value="Premium insulation"><span>Premium<small>高级保温</small></span></label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend><span>7</span>Opener · 开门机</legend>
+          <div class="chips" data-group="opener">
+            <label><input type="radio" name="opener" value="No opener / keep existing" checked><span>None / keep<small>不需要</small></span></label>
+            <label><input type="radio" name="opener" value="Chain drive opener"><span>Chain drive<small>链条式</small></span></label>
+            <label><input type="radio" name="opener" value="Belt drive opener (quiet)"><span>Belt drive<small>皮带式（静音）</small></span></label>
+            <label><input type="radio" name="opener" value="Wall-mount opener"><span>Wall-mount<small>侧挂式</small></span></label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend><span>8</span>Extras · 附加 <small>(optional)</small></legend>
+          <div class="chips multi">
+            <label><input type="checkbox" name="extras" value="Remove & haul away old door"><span>Remove old door<small>拆除旧门</small></span></label>
+            <label><input type="checkbox" name="extras" value="Wi-Fi / smartphone control"><span>Wi-Fi / app<small>手机控制</small></span></label>
+            <label><input type="checkbox" name="extras" value="Outside keypad"><span>Keypad<small>密码键盘</small></span></label>
+            <label><input type="checkbox" name="extras" value="Extra remotes"><span>Extra remotes<small>遥控器</small></span></label>
+            <label><input type="checkbox" name="extras" value="New weather seal"><span>Weather seal<small>密封条</small></span></label>
+          </div>
+        </fieldset>
+        <fieldset class="cfg-contact">
+          <legend><span>9</span>Your info · 联系方式</legend>
+          <div class="row">
+            <div class="field"><label for="cfgName">Name · 姓名 *</label><input id="cfgName" placeholder="Your name"></div>
+            <div class="field"><label for="cfgPhone">Phone · 电话 *</label><input id="cfgPhone" type="tel" placeholder="408-555-0123"></div>
+          </div>
+          <div class="row">
+            <div class="field"><label for="cfgEmail">Email · 邮箱</label><input id="cfgEmail" type="email" placeholder="you@example.com"></div>
+            <div class="field"><label for="cfgCity">City · 城市</label><input id="cfgCity" placeholder="e.g. San Jose"></div>
+          </div>
+          <div class="field"><label for="cfgNotes">Notes · 备注 <small>(optional)</small></label><textarea id="cfgNotes" placeholder="Anything else — timing, current door, questions"></textarea></div>
+          <input type="text" id="cfgHoney" class="hp" tabindex="-1" autocomplete="off">
+          <button class="btn" type="submit" id="cfgBtn">Send for quote · 提交报价</button>
+          <div class="form-msg" id="cfgMsg"></div>
+        </fieldset>
+      </form>
     </div>
   </div>
 </section>
@@ -531,6 +703,129 @@
   document.getElementById('modalOk').addEventListener('click',closeModal);
   modal.addEventListener('click',e=>{ if(e.target===modal) closeModal(); });
   document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+
+  // ---------- Door configurator ----------
+  const cfgForm=document.getElementById('cfgForm');
+  const pick=n=>{const el=cfgForm.querySelector(`input[name="${n}"]:checked`);return el?el.value:'';};
+  const cfgState=()=>{
+    let w,h; const sz=pick('size');
+    if(sz==='custom'){ w=parseFloat(document.getElementById('cW').value)||12; h=parseFloat(document.getElementById('cH').value)||7; }
+    else [w,h]=sz.split('x').map(Number);
+    w=Math.min(20,Math.max(6,w)); h=Math.min(10,Math.max(6,h));
+    const col=cfgForm.querySelector('input[name="color"]:checked');
+    return {w,h,custom:sz==='custom',style:pick('style'),material:pick('material'),color:col.value,hex:col.dataset.hex,wood:!!col.dataset.wood,
+      windows:pick('windows'),insulation:pick('insulation'),opener:pick('opener'),
+      extras:[...cfgForm.querySelectorAll('input[name="extras"]:checked')].map(e=>e.value)};
+  };
+  const shade=(hex,amt)=>{const n=parseInt(hex.slice(1),16);let r=n>>16,g=n>>8&255,b=n&255;
+    const f=c=>Math.max(0,Math.min(255,Math.round(c+amt)));return '#'+[f(r),f(g),f(b)].map(c=>c.toString(16).padStart(2,'0')).join('');};
+  function drawDoor(st){
+    const S=17, W=st.w*S, H=st.h*S, x0=(400-W)/2, y0=250-H;
+    const base=st.hex, dark=shade(base,-38), light=shade(base,22);
+    const line=shade(base,-55);
+    const glass='url(#glassG)';
+    let g='';
+    // house wall, trim, driveway
+    g+=`<defs><linearGradient id="glassG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#cfe3f1"/><stop offset=".55" stop-color="#9cbdd6"/><stop offset="1" stop-color="#7fa5c2"/></linearGradient>
+        <pattern id="grain" width="6" height="40" patternUnits="userSpaceOnUse"><rect width="6" height="40" fill="${base}"/><path d="M2 0v40" stroke="${dark}" stroke-width=".8" opacity=".55"/><path d="M4.5 0c-1 10 1 20 0 40" stroke="${light}" stroke-width=".6" opacity=".5" fill="none"/></pattern></defs>`;
+    g+=`<rect width="400" height="250" fill="#e8e2d6"/><path d="M0 0h400v14H0z" fill="#d6cfc1"/>`;
+    for(let y=22;y<250;y+=14) g+=`<line x1="0" y1="${y}" x2="400" y2="${y}" stroke="#d9d2c4" stroke-width="1"/>`;
+    g+=`<rect x="0" y="250" width="400" height="20" fill="#9a9a96"/>`;
+    g+=`<rect x="${x0-8}" y="${y0-8}" width="${W+16}" height="${H+8}" fill="#fbfaf7" stroke="#cfc8ba"/>`;
+    const fill=st.wood?'url(#grain)':base;
+    g+=`<rect x="${x0}" y="${y0}" width="${W}" height="${H}" fill="${fill}" stroke="${line}" stroke-width="1.5"/>`;
+    const rows=4, rh=H/rows;
+    const winRow=st.windows!=='No windows';
+    if(st.style==='Full-view glass'){
+      const cols=Math.max(3,Math.round(st.w/2.4)), cw=W/cols, fr=4;
+      for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)
+        g+=`<rect x="${x0+c*cw+fr}" y="${y0+r*rh+fr}" width="${cw-2*fr}" height="${rh-2*fr}" fill="${glass}" opacity=".92"/>`;
+    } else if(st.style==='Carriage house'){
+      const halves=st.w>=12?4:2, hw=W/halves;
+      for(let i=1;i<halves;i++) g+=`<line x1="${x0+i*hw}" y1="${y0}" x2="${x0+i*hw}" y2="${y0+H}" stroke="${line}" stroke-width="2.5"/>`;
+      for(let r=1;r<rows;r++) g+=`<line x1="${x0}" y1="${y0+r*rh}" x2="${x0+W}" y2="${y0+r*rh}" stroke="${line}" stroke-width="1" opacity=".5"/>`;
+      // vertical boards
+      for(let xx=x0+8;xx<x0+W;xx+=9) g+=`<line x1="${xx}" y1="${y0}" x2="${xx}" y2="${y0+H}" stroke="${dark}" stroke-width=".6" opacity=".35"/>`;
+      for(let i=0;i<halves;i++){
+        const a=x0+i*hw+6, b=x0+(i+1)*hw-6, top=y0+rh+6, bot=y0+H-6;
+        g+=`<rect x="${a}" y="${top}" width="${b-a}" height="${bot-top}" fill="none" stroke="${line}" stroke-width="2"/>`;
+        g+=`<path d="M${a} ${top}L${b} ${bot}M${b} ${top}L${a} ${bot}" stroke="${line}" stroke-width="2"/>`;
+      }
+      // handles & hinges
+      const mid=x0+W/2;
+      g+=`<rect x="${mid-14}" y="${y0+H*0.55}" width="4" height="18" rx="2" fill="#2a2a2a"/><rect x="${mid+10}" y="${y0+H*0.55}" width="4" height="18" rx="2" fill="#2a2a2a"/>`;
+      [x0+4,x0+W-22].forEach(hx=>[y0+rh*1.5,y0+rh*3.3].forEach(hy=>g+=`<rect x="${hx}" y="${hy}" width="18" height="4" rx="1" fill="#2a2a2a"/>`));
+    } else {
+      for(let r=1;r<rows;r++) g+=`<line x1="${x0}" y1="${y0+r*rh}" x2="${x0+W}" y2="${y0+r*rh}" stroke="${line}" stroke-width="1.5"/>`;
+      if(st.style==='Raised panel'){
+        const cols=Math.max(2,Math.round(st.w/2.1)), cw=W/cols, p=5;
+        for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+          const px=x0+c*cw+p, py=y0+r*rh+p, pw=cw-2*p, ph=rh-2*p;
+          g+=`<rect x="${px}" y="${py}" width="${pw}" height="${ph}" fill="${st.wood?'none':light}" stroke="${line}" stroke-width="1"/>`;
+          g+=`<path d="M${px} ${py+ph}h${pw}v-${ph}" stroke="${dark}" stroke-width="1.5" fill="none" opacity=".6"/>`;
+        }
+      } else { // modern flush: fine horizontal grooves
+        for(let yy=y0+rh/3;yy<y0+H;yy+=rh/3) g+=`<line x1="${x0}" y1="${yy}" x2="${x0+W}" y2="${yy}" stroke="${dark}" stroke-width=".6" opacity=".5"/>`;
+      }
+    }
+    // windows in the top row (not for full-view, which is already glass)
+    if(winRow && st.style!=='Full-view glass'){
+      const n=st.style==='Carriage house'?(st.w>=12?4:2)*1:Math.max(2,Math.round(st.w/2.1));
+      const cw=W/n, p=st.style==='Carriage house'?10:7, wy=y0+p, wh=rh-2*p;
+      for(let c=0;c<n;c++){
+        const wx=x0+c*cw+p, ww=cw-2*p;
+        g+=`<rect x="${wx}" y="${wy}" width="${ww}" height="${wh}" fill="${glass}" stroke="${line}" stroke-width="1.5"/>`;
+        if(st.windows==='Top row, decorative'){
+          g+=`<path d="M${wx+ww/2} ${wy}v${wh}M${wx} ${wy+wh/2}h${ww}" stroke="${shade(base,-10)}" stroke-width="2.2"/>`;
+          if(st.style==='Carriage house') g+=`<path d="M${wx+ww/4} ${wy}v${wh}M${wx+ww*3/4} ${wy}v${wh}" stroke="${shade(base,-10)}" stroke-width="1.6"/>`;
+        }
+      }
+    }
+    // dimension labels
+    const dimC='#555e6b';
+    g+=`<text x="200" y="${y0-14}" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="${dimC}">${st.w}' wide</text>`;
+    g+=`<text x="${x0+W+14}" y="${y0+H/2}" font-family="Inter,sans-serif" font-size="11" fill="${dimC}" transform="rotate(90 ${x0+W+14} ${y0+H/2})" text-anchor="middle">${st.h}' high</text>`;
+    document.getElementById('doorSvg').innerHTML=g;
+  }
+  const cfgRows=st=>[
+    ['Size · 尺寸',`${st.w}' × ${st.h}'${st.custom?' (custom)':''}`],
+    ['Style · 款式',st.style],['Material · 材质',st.material],['Color · 颜色',st.color],
+    ['Windows · 窗户',st.windows],['Insulation · 保温',st.insulation],['Opener · 开门机',st.opener],
+    ['Extras · 附加',st.extras.length?st.extras.join(', '):'None']];
+  const escH=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  function cfgUpdate(){
+    document.getElementById('customSize').classList.toggle('show',pick('size')==='custom');
+    const st=cfgState(); drawDoor(st);
+    document.getElementById('cfgSummary').innerHTML=cfgRows(st).map(([k,v])=>`<li><b>${k}</b><span>${escH(v)}</span></li>`).join('');
+  }
+  cfgForm.addEventListener('change',cfgUpdate);
+  cfgForm.addEventListener('input',e=>{ if(e.target.id==='cW'||e.target.id==='cH') cfgUpdate(); e.target.classList.remove('invalid'); });
+  cfgUpdate();
+
+  cfgForm.addEventListener('submit',async e=>{
+    e.preventDefault();
+    const msg=document.getElementById('cfgMsg'), v=id=>document.getElementById(id).value.trim();
+    msg.classList.remove('show');
+    cfgForm.querySelectorAll('.invalid').forEach(el=>el.classList.remove('invalid'));
+    const need=['cfgName','cfgPhone'].filter(id=>!v(id));
+    if(need.length){
+      need.forEach(id=>document.getElementById(id).classList.add('invalid'));
+      document.getElementById(need[0]).focus();
+      msg.textContent='Please fill in your name and phone. 请填写姓名和电话。'; msg.classList.add('show'); return;
+    }
+    const st=cfgState();
+    const message='DOOR CONFIGURATION\n'+cfgRows(st).map(([k,val])=>`${k.split(' · ')[0]}: ${val}`).join('\n')+(v('cfgNotes')?`\n\nNotes:\n${v('cfgNotes')}`:'');
+    const b=document.getElementById('cfgBtn'); b.textContent='Sending… 提交中'; b.disabled=true;
+    try{
+      const ctl=new AbortController(); const timer=setTimeout(()=>ctl.abort(),30000);
+      const res=await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},signal:ctl.signal,
+        body:JSON.stringify({type:'Door configuration quote',name:v('cfgName'),phone:v('cfgPhone'),email:v('cfgEmail'),city:v('cfgCity'),
+          service:`New door: ${st.w}' × ${st.h}' ${st.style}`,message,_honey:document.getElementById('cfgHoney').value})
+      }).then(r=>r.json()).finally(()=>clearTimeout(timer));
+      if(res.success){ ['cfgNotes'].forEach(id=>document.getElementById(id).value=''); openModal(true); } else openModal(false);
+    }catch(err){ openModal(false); }
+    finally{ b.textContent='Send for quote · 提交报价'; b.disabled=false; }
+  });
 </script>
 </body>
 </html>
