@@ -116,6 +116,8 @@
   .chips input:checked+span{border-color:var(--accent);background:#fff3ec;color:var(--accent-dark)}
   .chips input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
   .chips svg.thumb{display:block;width:100%;max-width:120px;height:auto;margin:0 auto 6px;border-radius:3px}
+  .sub-opt{margin-top:14px;padding-top:14px;border-top:1px dashed #e2ded6}
+  .sub-label{font-size:13px;font-weight:600;color:#555e6b;margin-bottom:8px}
   .custom-size{display:none;gap:12px;margin-top:12px;grid-template-columns:1fr 1fr}
   .custom-size.show{display:grid}
   .custom-size label{font-size:13px;font-weight:600}
@@ -438,6 +440,13 @@
             <label class="flush-only"><input type="radio" name="windows" value="Left side windows"><span>Left side<small>左侧窗</small></span></label>
             <label class="flush-only"><input type="radio" name="windows" value="Right side windows"><span>Right side<small>右侧窗</small></span></label>
           </div>
+          <div class="sub-opt" id="winSizeRow">
+            <div class="sub-label">Window size · 窗户尺寸</div>
+            <div class="chips" data-group="winsize">
+              <label><input type="radio" name="winsize" value="Long windows" checked><span>Long windows<small>长窗</small></span></label>
+              <label class="short-only"><input type="radio" name="winsize" value="Short windows"><span>Short windows<small>短窗</small></span></label>
+            </div>
+          </div>
         </fieldset>
         <fieldset>
           <legend><span>6</span>Insulation · 保温</legend>
@@ -717,7 +726,7 @@
     w=Math.min(20,Math.max(6,w)); h=Math.min(10,Math.max(6,h));
     const col=cfgForm.querySelector('input[name="color"]:checked');
     return {w,h,custom:sz==='custom',style:pick('style'),material:pick('material'),color:col.value,hex:col.dataset.hex,wood:!!col.dataset.wood,
-      windows:pick('windows'),insulation:pick('insulation'),opener:pick('opener'),
+      windows:pick('windows'),winsize:pick('winsize')||'Long windows',insulation:pick('insulation'),opener:pick('opener'),
       extras:[...cfgForm.querySelectorAll('input[name="extras"]:checked')].map(e=>e.value)};
   };
   let _uid=0;
@@ -764,6 +773,14 @@
       if(deco){ for(let k=1;k<4;k++) g+=`<path d="M${x+w*k/4} ${y}v${h}" stroke="${base}" stroke-width="${Math.max(1.6,Math.min(3,w*0.025))}"/>`; g+=`<path d="M${x} ${y+h/2}h${w}" stroke="${base}" stroke-width="1.6"/>`; }
       return g;
     };
+    const SC=Math.max(2,Math.round(st.w/2.1)), SCW=W/SC, SMX=SCW*0.085, SMY=rh*0.16;
+    const shortWin=(r,c)=>{
+      const x=x0+c*SCW+SMX, y=y0+r*rh+SMY, w=SCW-2*SMX, h=rh-2*SMY;
+      let g=glassPane(x+1,y+1,w-2,h-2);
+      if(deco) g+=`<path d="M${x+w/2} ${y}v${h}M${x} ${y+h/2}h${w}" stroke="${base}" stroke-width="${Math.max(1.4,Math.min(2.5,w*0.03))}"/>`;
+      return g;
+    };
+    const useShort=st.style==='Raised short panel'&&st.winsize==='Short windows';
 
     if(st.style==='Full-view glass'){
       const cols=Math.max(3,Math.round(st.w/2.3)), cw=W/cols, fr=Math.max(3,W*0.013);
@@ -808,7 +825,7 @@
         const mx=cw*(long?0.045:0.085), my=rh*0.16;
         for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
           const x=x0+c*cw+mx, y=y0+r*rh+my, w=cw-2*mx, h=rh-2*my;
-          if(r===0&&win){ if(c===0) for(let k=0;k<LC;k++) b+=longWin(0,k); }
+          if(r===0&&win){ if(c===0){ if(useShort) for(let k=0;k<SC;k++) b+=shortWin(0,k); else for(let k=0;k<LC;k++) b+=longWin(0,k);} }
           else {
             // embossed steel panel (matches stamped steel doors): outer stamped edge, narrow flat band, thin bevel, large flat field
             const e=Math.max(.5,h*0.035), band=Math.max(.5,h*0.05), bv=Math.max(.7,h*0.065);
@@ -834,12 +851,9 @@
         b+=`<rect x="${x0}" y="${y0}" width="${W}" height="${H}" filter="url(#${p}mot)" opacity="${LUM>0.6?.55:.10}"/>`;
         const side=st.windows.startsWith('Left')?'L':st.windows.startsWith('Right')?'R':'';
         if(side){
-          // modern flush windows are double the long-panel width
-          const sp=Math.min(2,LC);
-          for(let r=0;r<rows;r++) b+=side==='L'?longWin(r,0,sp,W*0.55):longWin(r,LC-sp,sp,W*0.55,true);
+          for(let r=0;r<rows;r++) b+=longWin(r,side==='L'?0:LC-1);
         } else if(win){
-          const sp=Math.min(2,LC);
-          for(let k=0;k+sp<=LC;k+=sp) b+=longWin(0,k,sp);
+          for(let k=0;k<LC;k++) b+=longWin(0,k);
         }
       }
       b+=joints();
@@ -887,13 +901,16 @@
   const cfgRows=st=>[
     ['Size · 尺寸',`${st.w}' × ${st.h}'${st.custom?' (custom)':''}`],
     ['Style · 款式',st.style],['Material · 材质',st.material],['Color · 颜色',st.color],
-    ['Windows · 窗户',st.windows],['Insulation · 保温',st.insulation],['Opener · 开门机',st.opener],
+    ['Windows · 窗户',st.windows],['Window size · 窗户尺寸',st.windows==='No windows'?'—':st.winsize],['Insulation · 保温',st.insulation],['Opener · 开门机',st.opener],
     ['Extras · 附加',st.extras.length?st.extras.join(', '):'None']];
   const escH=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   function cfgUpdate(){
     document.getElementById('customSize').classList.toggle('show',pick('size')==='custom');
     const flush=pick('style')==='Modern flush';
+    const shortOk=pick('style')==='Raised short panel';
+    cfgForm.querySelectorAll('.short-only').forEach(l=>{ l.style.display=shortOk?'':'none'; if(!shortOk&&l.querySelector('input').checked) cfgForm.querySelector('input[name="winsize"][value="Long windows"]').checked=true; });
     cfgForm.querySelectorAll('.flush-only').forEach(l=>{ l.style.display=flush?'':'none'; if(!flush&&l.querySelector('input').checked) cfgForm.querySelector('input[name="windows"][value="No windows"]').checked=true; });
+    document.getElementById('winSizeRow').style.display=pick('windows')==='No windows'?'none':'';
     const st=cfgState(); drawDoor(st); drawThumbs(st);
     document.getElementById('cfgSummary').innerHTML=cfgRows(st).map(([k,v])=>`<li><b>${k}</b><span>${escH(v)}</span></li>`).join('');
   }
