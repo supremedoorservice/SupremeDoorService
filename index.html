@@ -431,10 +431,17 @@
 
 <div class="modal" id="sentModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
   <div class="modal-card">
+    <div id="modalOkView">
     <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="32" fill="#1f9d55"/><path d="M18 33l9 9 19-20" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
     <h3 id="modalTitle">Request received!<br><span>已收到您的请求</span></h3>
     <div class="modal-days">Your request will be processed within <b>3 days</b>.<br>我们将在 <b>3 天内</b> 处理您的请求。</div>
     <p>We'll contact you by phone or email. For urgent repairs, call <a href="tel:4084611483"><b>408-461-1483</b></a>.<br>如需紧急维修，请直接致电。</p>
+    </div>
+    <div id="modalErrView" style="display:none">
+      <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="32" fill="#c44612"/><path d="M32 16v20M32 44v4" stroke="#fff" stroke-width="5" stroke-linecap="round"/></svg>
+      <h3>Request not sent<br><span>提交失败</span></h3>
+      <p>Something went wrong sending your request. Please try again, or call <a href="tel:4084611483"><b>408-461-1483</b></a> / email <b>supremedoorservice@gmail.com</b>.<br>请重试，或直接致电/发邮件联系我们。</p>
+    </div>
     <button class="btn" id="modalOk" type="button">OK · 好的</button>
   </div>
 </div>
@@ -472,10 +479,7 @@
       msg.textContent='The file is too large (max 5 MB). 文件太大（最大 5MB）。';
       msg.classList.add('show'); return;
     }
-    const fail=()=>{
-      msg.innerHTML='Sorry, your request could not be sent. Please call <b>408-461-1483</b> or email <b>supremedoorservice@gmail.com</b>. 提交失败，请致电或发邮件联系我们。';
-      msg.classList.add('show');
-    };
+    const fail=()=>openModal(false);
     if(!SCRIPT_URL){ fail(); return; }
     const b=document.getElementById('sendBtn'); b.textContent='Sending… 提交中'; b.disabled=true;
     try{
@@ -487,15 +491,20 @@
         _honey:document.getElementById('honey').value
       };
       if(f) payload.file={name:f.name,type:f.type,data:await readFile(f)};
-      const res=await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)}).then(r=>r.json());
-      if(res.success){ form.reset(); syncType(); openModal(); } else fail();
+      const ctl=new AbortController(); const timer=setTimeout(()=>ctl.abort(),30000);
+      const res=await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload),signal:ctl.signal}).then(r=>r.json()).finally(()=>clearTimeout(timer));
+      if(res.success){ form.reset(); syncType(); openModal(true); } else fail();
     }catch(err){ fail(); }
     finally{ b.textContent='Send request · 提交'; b.disabled=false; }
   });
 
   // Confirmation pop-up
   const modal=document.getElementById('sentModal');
-  function openModal(){ modal.classList.add('open'); document.getElementById('modalOk').focus(); }
+  function openModal(ok){
+    document.getElementById('modalOkView').style.display=ok?'block':'none';
+    document.getElementById('modalErrView').style.display=ok?'none':'block';
+    modal.classList.add('open'); document.getElementById('modalOk').focus();
+  }
   function closeModal(){ modal.classList.remove('open'); }
   document.getElementById('modalOk').addEventListener('click',closeModal);
   modal.addEventListener('click',e=>{ if(e.target===modal) closeModal(); });
