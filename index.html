@@ -722,6 +722,7 @@
   // Draws a door at (x0,y0) size W×H in px. Returns {defs, body}.
   function doorArt(st,x0,y0,W,H){
     const p='d'+(++_uid)+'_', base=st.hex;
+    const _n=parseInt(base.slice(1),16), LUM=(0.299*(_n>>16)+0.587*(_n>>8&255)+0.114*(_n&255))/255;
     const dk=a=>`rgba(0,0,0,${a})`, lt=a=>`rgba(255,255,255,${a})`;
     const rows=4, rh=H/rows;
     let defs=`<clipPath id="${p}clip"><rect x="${x0}" y="${y0}" width="${W}" height="${H}"/></clipPath>
@@ -730,6 +731,7 @@
       <linearGradient id="${p}glass" x1="0" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#e3eef6"/><stop offset=".35" stop-color="#9fb9cc"/><stop offset=".7" stop-color="#5f7d94"/><stop offset="1" stop-color="#3f586b"/></linearGradient>
       <filter id="${p}wood" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency="0.01 0.32" numOctaves="3" seed="9"/><feColorMatrix type="matrix" values="0 0 0 0 .12  0 0 0 0 .06  0 0 0 0 .02  0 0 0 1.6 -.62"/></filter>
       <filter id="${p}tex" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="3"/><feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.2 .75"/></filter>
+      <filter id="${p}mot" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency="0.012 0.03" numOctaves="2" seed="5"/><feColorMatrix type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .9 -.35"/></filter>
       <filter id="${p}sh" x="-10%" y="-10%" width="130%" height="130%"><feDropShadow dx="1.2" dy="1.6" stdDeviation="1" flood-color="#000" flood-opacity=".35"/></filter>`;
     let b=`<g clip-path="url(#${p}clip)"><rect x="${x0}" y="${y0}" width="${W}" height="${H}" fill="${base}"/>`;
     if(st.wood) b+=`<rect x="${x0}" y="${y0}" width="${W}" height="${H}" filter="url(#${p}wood)" opacity=".85"/>`;
@@ -749,7 +751,7 @@
       `<polygon points="${x+w},${y} ${x+w},${y+h} ${x+w-bv},${y+h-bv} ${x+w-bv},${y+bv}" fill="${dk(.20)}"/>`+
       `<rect x="${x+bv}" y="${y+bv}" width="${w-2*bv}" height="${h-2*bv}" fill="${lt(.05)}"/>`+
       `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="${dk(.28)}" stroke-width=".8"/>`);
-    const joints=()=>{let g='';for(let r=1;r<rows;r++){const y=y0+r*rh;g+=`<line x1="${x0}" y1="${y-.8}" x2="${x0+W}" y2="${y-.8}" stroke="${dk(.16)}" stroke-width="1"/><line x1="${x0}" y1="${y+.5}" x2="${x0+W}" y2="${y+.5}" stroke="${lt(.55)}" stroke-width="1"/>`;}return g;};
+    const joints=()=>{let g='';for(let r=1;r<rows;r++){const y=y0+r*rh;g+=`<line x1="${x0}" y1="${y-.8}" x2="${x0+W}" y2="${y-.8}" stroke="${dk(.16)}" stroke-width="1"/><line x1="${x0}" y1="${y+.5}" x2="${x0+W}" y2="${y+.5}" stroke="${lt(LUM>0.6?.55:.18)}" stroke-width="1"/>`;}return g;};
     const win=st.windows!=='No windows', deco=st.windows==='Top row, decorative';
 
     if(st.style==='Full-view glass'){
@@ -817,7 +819,8 @@
           }
         }
       } else if(st.style==='Modern flush'){
-        for(let r=0;r<rows;r++)for(let k=1;k<3;k++){const y=y0+r*rh+rh*k/3;b+=`<line x1="${x0}" y1="${y}" x2="${x0+W}" y2="${y}" stroke="${dk(.12)}" stroke-width=".8"/><line x1="${x0}" y1="${y+.8}" x2="${x0+W}" y2="${y+.8}" stroke="${lt(.15)}" stroke-width=".6"/>`;}
+        // smooth flush sections: soft mottled sheen only, no grooves
+        b+=`<rect x="${x0}" y="${y0}" width="${W}" height="${H}" filter="url(#${p}mot)" opacity="${LUM>0.6?.55:.10}"/>`;
         if(win){
           const n=Math.max(2,Math.round(st.w/2.1)), cw=W/n, wy=y0+rh*0.28, wh=rh*0.44;
           for(let c=0;c<n;c++){ b+=glassPane(x0+c*cw+cw*0.12,wy,cw*0.76,wh); if(deco) b+=`<path d="M${x0+c*cw+cw/2} ${wy}v${wh}" stroke="${base}" stroke-width="2"/>`; }
