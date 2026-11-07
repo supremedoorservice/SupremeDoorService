@@ -84,6 +84,26 @@
   .stat b{display:block;font-family:Oswald,sans-serif;font-size:34px;color:var(--accent);line-height:1}
   .stat span{font-size:14px;color:#555e6b}
 
+  /* Reviews */
+  .reviews{background:#fff;border-top:1px solid #e2ded6}
+  .reviews-head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-bottom:40px}
+  .reviews-head h2{font-size:clamp(32px,4vw,46px)}
+  .yelp-badge{display:flex;align-items:center;gap:14px;text-decoration:none;border:1px solid #e2ded6;border-radius:8px;padding:14px 20px;background:var(--paper)}
+  .yelp-badge:hover{border-color:var(--accent)}
+  .yelp-score{font-family:Oswald,sans-serif;font-size:40px;font-weight:700;line-height:1}
+  .yelp-badge small{display:block;font-size:13px;color:#555e6b}
+  .stars{color:#f5a623;letter-spacing:2px;font-size:18px}
+  .review-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+  .review{background:var(--paper);border-radius:8px;padding:24px;display:flex;flex-direction:column;border-left:4px solid var(--accent)}
+  .review blockquote{font-size:16px;line-height:1.5;margin:12px 0 20px;flex:1}
+  .review figcaption b{display:block;font-size:15px}
+  .review figcaption span{font-size:13px;color:#6b7380}
+  .review-ctas{margin-top:32px;display:flex;flex-wrap:wrap;gap:12px}
+  .review-ctas .btn.ghost{margin-left:0}
+  .btn.ghost.dark{color:var(--ink)}
+  @media (max-width:960px){.review-grid{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:760px){.review-grid{grid-template-columns:1fr}}
+
   /* Contact */
   .contact{background:var(--steel);color:#fff}
   .contact .section-head p{color:#a9b2bf}
@@ -163,6 +183,7 @@
         <li><a href="#home">HOME</a></li>
         <li><a href="#services">SERVICES</a></li>
         <li><a href="#about">ABOUT</a></li>
+        <li><a href="#reviews">REVIEWS</a></li>
         <li><a href="#contact">CONTACT US</a></li>
       </ul>
     </nav>
@@ -260,6 +281,47 @@
       <div class="stat"><b>4</b><span>Core services</span></div>
       <div class="stat"><b>Free</b><span>Quotes on every job</span></div>
       <div class="stat"><b>EN / 中</b><span>Bilingual service</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="reviews" id="reviews">
+  <div class="wrap">
+    <div class="reviews-head">
+      <div class="section-head" style="margin-bottom:0">
+        <div class="eyebrow">Reviews · 客户评价</div>
+        <h2>What customers say</h2>
+      </div>
+      <a class="yelp-badge" href="https://www.yelp.com/biz/supreme-garage-door-service-san-jose-10" target="_blank" rel="noopener">
+        <span class="yelp-score">5.0</span>
+        <span><span class="stars">★★★★★</span><small>on Yelp · 4 reviews</small></span>
+      </a>
+    </div>
+    <div class="review-grid">
+      <figure class="review">
+        <div class="stars">★★★★★</div>
+        <blockquote>“Ray did a really good job for garage door.”</blockquote>
+        <figcaption><b>Mengxuan C.</b><span>Garage door replacement · Yelp</span></figcaption>
+      </figure>
+      <figure class="review">
+        <div class="stars">★★★★★</div>
+        <blockquote>“Ray was fantastic! He helped us replace the motor quickly…”</blockquote>
+        <figcaption><b>Yelp reviewer</b><span>Opener replacement · Yelp</span></figcaption>
+      </figure>
+      <figure class="review">
+        <div class="stars">★★★★★</div>
+        <blockquote>“Steve came to inspect my garage door failure the same day…”</blockquote>
+        <figcaption><b>Yelp reviewer</b><span>Spring repair · Yelp</span></figcaption>
+      </figure>
+      <figure class="review">
+        <div class="stars">★★★★★</div>
+        <blockquote>“We are very satisfied with their service. Thank you!”</blockquote>
+        <figcaption><b>Yelp reviewer</b><span>Garage door service · Yelp</span></figcaption>
+      </figure>
+    </div>
+    <div class="review-ctas">
+      <a class="btn" href="https://www.yelp.com/biz/supreme-garage-door-service-san-jose-10" target="_blank" rel="noopener">Read all reviews on Yelp</a>
+      <a class="btn ghost dark" href="https://www.yelp.com/biz/supreme-garage-door-service-san-jose-10" target="_blank" rel="noopener">Leave us a review · 留下评价</a>
     </div>
   </div>
 </section>
