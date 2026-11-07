@@ -27,8 +27,8 @@
   .brand svg{flex:none}
   .brand-name{white-space:nowrap;font-family:Oswald,sans-serif;font-weight:700;font-size:20px;letter-spacing:.04em;line-height:1}
   .brand-sub{font-size:12px;color:var(--muted);margin-top:4px}
-  nav ul{display:flex;list-style:none;gap:22px}
-  nav a{white-space:nowrap;text-decoration:none;font-family:Oswald,sans-serif;font-size:15px;letter-spacing:.08em;color:#d6dbe2;transition:color .15s}
+  nav ul{display:flex;list-style:none;gap:18px}
+  nav a{white-space:nowrap;text-decoration:none;font-family:Oswald,sans-serif;font-size:14px;letter-spacing:.08em;color:#d6dbe2;transition:color .15s}
   nav a:hover{color:var(--accent)}
   .call-btn{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#fff;text-decoration:none;font-family:Oswald,sans-serif;font-weight:600;letter-spacing:.04em;padding:10px 18px;border-radius:4px;white-space:nowrap}
   .call-btn:hover{background:var(--accent-dark)}
@@ -36,6 +36,7 @@
   .brand{min-width:0}
   .brand>div{min-width:0}
   .brand-name{overflow:hidden;text-overflow:ellipsis}
+  @media (min-width:1151px) and (max-width:1300px){.brand-name{font-size:17px}.call-btn{padding:10px 14px}}
 
   /* Hero */
   .hero{position:relative;background:var(--steel);color:var(--white);overflow:hidden}
@@ -114,6 +115,7 @@
   .chips label:hover span{border-color:#b9b3a8}
   .chips input:checked+span{border-color:var(--accent);background:#fff3ec;color:var(--accent-dark)}
   .chips input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
+  .chips svg.thumb{display:block;width:100%;max-width:120px;height:auto;margin:0 auto 6px;border-radius:3px}
   .custom-size{display:none;gap:12px;margin-top:12px;grid-template-columns:1fr 1fr}
   .custom-size.show{display:grid}
   .custom-size label{font-size:13px;font-weight:600}
@@ -375,7 +377,7 @@
     <div class="cfg-grid">
       <div class="cfg-preview">
         <div class="cfg-stage">
-          <svg id="doorSvg" viewBox="0 0 400 270" role="img" aria-label="Door preview"></svg>
+          <svg id="doorSvg" viewBox="0 0 400 270" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Door preview"></svg>
         </div>
         <div class="cfg-summary">
           <h3>Your door · 您的配置</h3>
@@ -717,75 +719,128 @@
       windows:pick('windows'),insulation:pick('insulation'),opener:pick('opener'),
       extras:[...cfgForm.querySelectorAll('input[name="extras"]:checked')].map(e=>e.value)};
   };
-  const shade=(hex,amt)=>{const n=parseInt(hex.slice(1),16);let r=n>>16,g=n>>8&255,b=n&255;
-    const f=c=>Math.max(0,Math.min(255,Math.round(c+amt)));return '#'+[f(r),f(g),f(b)].map(c=>c.toString(16).padStart(2,'0')).join('');};
-  function drawDoor(st){
-    const S=17, W=st.w*S, H=st.h*S, x0=(400-W)/2, y0=250-H;
-    const base=st.hex, dark=shade(base,-38), light=shade(base,22);
-    const line=shade(base,-55);
-    const glass='url(#glassG)';
-    let g='';
-    // house wall, trim, driveway
-    g+=`<defs><linearGradient id="glassG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#cfe3f1"/><stop offset=".55" stop-color="#9cbdd6"/><stop offset="1" stop-color="#7fa5c2"/></linearGradient>
-        <pattern id="grain" width="6" height="40" patternUnits="userSpaceOnUse"><rect width="6" height="40" fill="${base}"/><path d="M2 0v40" stroke="${dark}" stroke-width=".8" opacity=".55"/><path d="M4.5 0c-1 10 1 20 0 40" stroke="${light}" stroke-width=".6" opacity=".5" fill="none"/></pattern></defs>`;
-    g+=`<rect width="400" height="250" fill="#e8e2d6"/><path d="M0 0h400v14H0z" fill="#d6cfc1"/>`;
-    for(let y=22;y<250;y+=14) g+=`<line x1="0" y1="${y}" x2="400" y2="${y}" stroke="#d9d2c4" stroke-width="1"/>`;
-    g+=`<rect x="0" y="250" width="400" height="20" fill="#9a9a96"/>`;
-    g+=`<rect x="${x0-8}" y="${y0-8}" width="${W+16}" height="${H+8}" fill="#fbfaf7" stroke="#cfc8ba"/>`;
-    const fill=st.wood?'url(#grain)':base;
-    g+=`<rect x="${x0}" y="${y0}" width="${W}" height="${H}" fill="${fill}" stroke="${line}" stroke-width="1.5"/>`;
+  let _uid=0;
+  // Draws a door at (x0,y0) size W×H in px. Returns {defs, body}.
+  function doorArt(st,x0,y0,W,H){
+    const p='d'+(++_uid)+'_', base=st.hex;
+    const dk=a=>`rgba(0,0,0,${a})`, lt=a=>`rgba(255,255,255,${a})`;
     const rows=4, rh=H/rows;
-    const winRow=st.windows!=='No windows';
+    let defs=`<clipPath id="${p}clip"><rect x="${x0}" y="${y0}" width="${W}" height="${H}"/></clipPath>
+      <linearGradient id="${p}lit" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".22"/></linearGradient>
+      <linearGradient id="${p}side" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000" stop-opacity=".10"/><stop offset=".3" stop-color="#000" stop-opacity="0"/><stop offset=".7" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".12"/></linearGradient>
+      <linearGradient id="${p}glass" x1="0" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#e3eef6"/><stop offset=".35" stop-color="#9fb9cc"/><stop offset=".7" stop-color="#5f7d94"/><stop offset="1" stop-color="#3f586b"/></linearGradient>
+      <filter id="${p}wood" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency="0.01 0.32" numOctaves="3" seed="9"/><feColorMatrix type="matrix" values="0 0 0 0 .12  0 0 0 0 .06  0 0 0 0 .02  0 0 0 1.6 -.62"/></filter>
+      <filter id="${p}sh" x="-10%" y="-10%" width="130%" height="130%"><feDropShadow dx="1.2" dy="1.6" stdDeviation="1" flood-color="#000" flood-opacity=".35"/></filter>`;
+    let b=`<g clip-path="url(#${p}clip)"><rect x="${x0}" y="${y0}" width="${W}" height="${H}" fill="${base}"/>`;
+    if(st.wood) b+=`<rect x="${x0}" y="${y0}" width="${W}" height="${H}" filter="url(#${p}wood)" opacity=".85"/>`;
+    const glassPane=(x,y,w,h,frame)=>{
+      let g=`<rect x="${x-1.5}" y="${y-1.5}" width="${w+3}" height="${h+3}" fill="${dk(.45)}"/>`;
+      g+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#${p}glass)"/>`;
+      g+=`<polygon points="${x+w*.15},${y} ${x+w*.42},${y} ${x+w*.12},${y+h} ${x},${y+h} ${x},${y+h*.7}" fill="${lt(.22)}"/>`;
+      g+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="${dk(.35)}" stroke-width="1"/>`;
+      g+=`<line x1="${x}" y1="${y+h+1.5}" x2="${x+w}" y2="${y+h+1.5}" stroke="${lt(.35)}" stroke-width="1"/>`;
+      return g;
+    };
+    const bevel=(x,y,w,h,bv)=>(bv=Math.min(bv,w*0.3,h*0.3),
+      `<polygon points="${x},${y} ${x+w},${y} ${x+w-bv},${y+bv} ${x+bv},${y+bv}" fill="${lt(.30)}"/>`+
+      `<polygon points="${x},${y} ${x+bv},${y+bv} ${x+bv},${y+h-bv} ${x},${y+h}" fill="${lt(.14)}"/>`+
+      `<polygon points="${x},${y+h} ${x+bv},${y+h-bv} ${x+w-bv},${y+h-bv} ${x+w},${y+h}" fill="${dk(.30)}"/>`+
+      `<polygon points="${x+w},${y} ${x+w},${y+h} ${x+w-bv},${y+h-bv} ${x+w-bv},${y+bv}" fill="${dk(.20)}"/>`+
+      `<rect x="${x+bv}" y="${y+bv}" width="${w-2*bv}" height="${h-2*bv}" fill="${lt(.05)}"/>`+
+      `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="${dk(.28)}" stroke-width=".8"/>`);
+    const joints=()=>{let g='';for(let r=1;r<rows;r++){const y=y0+r*rh;g+=`<line x1="${x0}" y1="${y-.8}" x2="${x0+W}" y2="${y-.8}" stroke="${dk(.45)}" stroke-width="1.6"/><line x1="${x0}" y1="${y+.9}" x2="${x0+W}" y2="${y+.9}" stroke="${lt(.45)}" stroke-width="1"/>`;}return g;};
+    const win=st.windows!=='No windows', deco=st.windows==='Top row, decorative';
+
     if(st.style==='Full-view glass'){
-      const cols=Math.max(3,Math.round(st.w/2.4)), cw=W/cols, fr=4;
-      for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)
-        g+=`<rect x="${x0+c*cw+fr}" y="${y0+r*rh+fr}" width="${cw-2*fr}" height="${rh-2*fr}" fill="${glass}" opacity=".92"/>`;
+      const cols=Math.max(3,Math.round(st.w/2.3)), cw=W/cols, fr=Math.max(3,W*0.013);
+      for(let r=0;r<rows;r++)for(let c=0;c<cols;c++) b+=glassPane(x0+c*cw+fr,y0+r*rh+fr,cw-2*fr,rh-2*fr);
+      b+=joints();
+      for(let c=1;c<cols;c++){const x=x0+c*cw;b+=`<line x1="${x}" y1="${y0}" x2="${x}" y2="${y0+H}" stroke="${lt(.18)}" stroke-width="1"/>`;}
     } else if(st.style==='Carriage house'){
-      const halves=st.w>=12?4:2, hw=W/halves;
-      for(let i=1;i<halves;i++) g+=`<line x1="${x0+i*hw}" y1="${y0}" x2="${x0+i*hw}" y2="${y0+H}" stroke="${line}" stroke-width="2.5"/>`;
-      for(let r=1;r<rows;r++) g+=`<line x1="${x0}" y1="${y0+r*rh}" x2="${x0+W}" y2="${y0+r*rh}" stroke="${line}" stroke-width="1" opacity=".5"/>`;
-      // vertical boards
-      for(let xx=x0+8;xx<x0+W;xx+=9) g+=`<line x1="${xx}" y1="${y0}" x2="${xx}" y2="${y0+H}" stroke="${dark}" stroke-width=".6" opacity=".35"/>`;
+      const halves=st.w>=12?4:2, hw=W/halves, t=Math.max(4,W*0.022);
+      // tongue-and-groove planks
+      const pw=Math.max(6,W/(st.w*1.6));
+      for(let x=x0+pw;x<x0+W;x+=pw) b+=`<line x1="${x-.6}" y1="${y0}" x2="${x-.6}" y2="${y0+H}" stroke="${dk(.28)}" stroke-width="1"/><line x1="${x+.6}" y1="${y0}" x2="${x+.6}" y2="${y0+H}" stroke="${lt(.22)}" stroke-width=".8"/>`;
+      b+=joints();
       for(let i=0;i<halves;i++){
-        const a=x0+i*hw+6, b=x0+(i+1)*hw-6, top=y0+rh+6, bot=y0+H-6;
-        g+=`<rect x="${a}" y="${top}" width="${b-a}" height="${bot-top}" fill="none" stroke="${line}" stroke-width="2"/>`;
-        g+=`<path d="M${a} ${top}L${b} ${bot}M${b} ${top}L${a} ${bot}" stroke="${line}" stroke-width="2"/>`;
+        const a=x0+i*hw+t*0.6, bb=x0+(i+1)*hw-t*0.6, top=y0+t*0.6, bot=y0+H-t*0.6, mid=y0+rh;
+        if(win){
+          const n=deco?3:2, gw=(bb-a-2*t)/n;
+          for(let k=0;k<n;k++) b+=glassPane(a+t+k*gw+1.5,top+t+1,gw-3,mid-top-t-2);
+        }
+        // overlay boards (frame + cross) with shadow
+        const board=d=>`<path d="${d}" stroke="${dk(.35)}" stroke-width="${t}" fill="none" transform="translate(1.4 1.8)" stroke-linejoin="miter"/><path d="${d}" stroke="${base}" stroke-width="${t}" fill="none" stroke-linejoin="miter"/>${st.wood?`<path d="${d}" stroke="${dk(.18)}" stroke-width="${t}" fill="none"/>`:''}<path d="${d}" stroke="${lt(.28)}" stroke-width="1" fill="none" transform="translate(${-t/2+.6} ${-t/2+.6})"/>`;
+        b+=board(`M${a+t/2} ${top+t/2}H${bb-t/2}V${bot-t/2}H${a+t/2}Z`);
+        b+=board(`M${a+t/2} ${mid}H${bb-t/2}`);
+        b+=board(`M${a+t} ${mid+t/2}L${bb-t} ${bot-t}M${bb-t} ${mid+t/2}L${a+t} ${bot-t}`);
       }
-      // handles & hinges
-      const mid=x0+W/2;
-      g+=`<rect x="${mid-14}" y="${y0+H*0.55}" width="4" height="18" rx="2" fill="#2a2a2a"/><rect x="${mid+10}" y="${y0+H*0.55}" width="4" height="18" rx="2" fill="#2a2a2a"/>`;
-      [x0+4,x0+W-22].forEach(hx=>[y0+rh*1.5,y0+rh*3.3].forEach(hy=>g+=`<rect x="${hx}" y="${hy}" width="18" height="4" rx="1" fill="#2a2a2a"/>`));
+      // hardware
+      const hw2=Math.max(2.5,W*0.008), hl=H*0.13, cx=x0+W/2;
+      b+=`<g filter="url(#${p}sh)" fill="#1d1d1f">`;
+      b+=`<rect x="${cx-hw*0.12-hw2}" y="${y0+H*0.5}" width="${hw2}" height="${hl}" rx="1"/><rect x="${cx+hw*0.12}" y="${y0+H*0.5}" width="${hw2}" height="${hl}" rx="1"/>`;
+      if(halves===4){const q1=x0+W/4,q3=x0+W*3/4;b+=`<rect x="${q1-hw2-3}" y="${y0+H*0.5}" width="${hw2}" height="${hl}" rx="1"/><rect x="${q3+3}" y="${y0+H*0.5}" width="${hw2}" height="${hl}" rx="1"/>`;}
+      const sl=hw*0.32, sh2=Math.max(2.5,H*0.022);
+      [[x0+2,1],[x0+W-2,-1]].forEach(([sx,dir])=>[y0+rh*1.35,y0+rh*3.2].forEach(sy=>{
+        b+=`<path d="M${sx} ${sy}h${dir*sl}l${dir*sh2*1.6} ${sh2/2}l${-dir*sh2*1.6} ${sh2/2}h${-dir*sl}z"/>`;
+        for(let k=1;k<4;k++) b+=`<circle cx="${sx+dir*sl*k/4}" cy="${sy+sh2/2}" r=".9" fill="#555"/>`;
+      }));
+      b+=`</g>`;
     } else {
-      for(let r=1;r<rows;r++) g+=`<line x1="${x0}" y1="${y0+r*rh}" x2="${x0+W}" y2="${y0+r*rh}" stroke="${line}" stroke-width="1.5"/>`;
       if(st.style==='Raised panel'){
-        const cols=Math.max(2,Math.round(st.w/2.1)), cw=W/cols, p=5;
+        const cols=Math.max(2,Math.round(st.w/2.1)), cw=W/cols, m=Math.max(3,W*0.014), bv=Math.max(2.5,rh*0.14);
         for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
-          const px=x0+c*cw+p, py=y0+r*rh+p, pw=cw-2*p, ph=rh-2*p;
-          g+=`<rect x="${px}" y="${py}" width="${pw}" height="${ph}" fill="${st.wood?'none':light}" stroke="${line}" stroke-width="1"/>`;
-          g+=`<path d="M${px} ${py+ph}h${pw}v-${ph}" stroke="${dark}" stroke-width="1.5" fill="none" opacity=".6"/>`;
+          const x=x0+c*cw+m, y=y0+r*rh+m, w=cw-2*m, h=rh-2*m;
+          if(r===0&&win){ b+=glassPane(x+1,y+1,w-2,h-2); if(deco){b+=`<path d="M${x+w/2} ${y}v${h}M${x+w/4} ${y}v${h}M${x+w*3/4} ${y}v${h}" stroke="${base}" stroke-width="${Math.max(1.6,w*0.045)}"/>`;} }
+          else b+=bevel(x,y,w,h,bv);
         }
-      } else { // modern flush: fine horizontal grooves
-        for(let yy=y0+rh/3;yy<y0+H;yy+=rh/3) g+=`<line x1="${x0}" y1="${yy}" x2="${x0+W}" y2="${yy}" stroke="${dark}" stroke-width=".6" opacity=".5"/>`;
-      }
-    }
-    // windows in the top row (not for full-view, which is already glass)
-    if(winRow && st.style!=='Full-view glass'){
-      const n=st.style==='Carriage house'?(st.w>=12?4:2)*1:Math.max(2,Math.round(st.w/2.1));
-      const cw=W/n, p=st.style==='Carriage house'?10:7, wy=y0+p, wh=rh-2*p;
-      for(let c=0;c<n;c++){
-        const wx=x0+c*cw+p, ww=cw-2*p;
-        g+=`<rect x="${wx}" y="${wy}" width="${ww}" height="${wh}" fill="${glass}" stroke="${line}" stroke-width="1.5"/>`;
-        if(st.windows==='Top row, decorative'){
-          g+=`<path d="M${wx+ww/2} ${wy}v${wh}M${wx} ${wy+wh/2}h${ww}" stroke="${shade(base,-10)}" stroke-width="2.2"/>`;
-          if(st.style==='Carriage house') g+=`<path d="M${wx+ww/4} ${wy}v${wh}M${wx+ww*3/4} ${wy}v${wh}" stroke="${shade(base,-10)}" stroke-width="1.6"/>`;
+      } else { // Modern flush
+        for(let r=0;r<rows;r++)for(let k=1;k<3;k++){const y=y0+r*rh+rh*k/3;b+=`<line x1="${x0}" y1="${y}" x2="${x0+W}" y2="${y}" stroke="${dk(.12)}" stroke-width=".8"/><line x1="${x0}" y1="${y+.8}" x2="${x0+W}" y2="${y+.8}" stroke="${lt(.15)}" stroke-width=".6"/>`;}
+        if(win){
+          const n=Math.max(2,Math.round(st.w/2.1)), cw=W/n, wy=y0+rh*0.28, wh=rh*0.44;
+          for(let c=0;c<n;c++){ b+=glassPane(x0+c*cw+cw*0.12,wy,cw*0.76,wh); if(deco) b+=`<path d="M${x0+c*cw+cw/2} ${wy}v${wh}" stroke="${base}" stroke-width="2"/>`; }
         }
       }
+      b+=joints();
     }
-    // dimension labels
-    const dimC='#555e6b';
-    g+=`<text x="200" y="${y0-14}" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="${dimC}">${st.w}' wide</text>`;
-    g+=`<text x="${x0+W+14}" y="${y0+H/2}" font-family="Inter,sans-serif" font-size="11" fill="${dimC}" transform="rotate(90 ${x0+W+14} ${y0+H/2})" text-anchor="middle">${st.h}' high</text>`;
+    b+=`<rect x="${x0}" y="${y0}" width="${W}" height="${H}" fill="url(#${p}lit)"/><rect x="${x0}" y="${y0}" width="${W}" height="${H}" fill="url(#${p}side)"/></g>`;
+    b+=`<rect x="${x0}" y="${y0+H-2}" width="${W}" height="2" fill="#1b1b1b"/>`;
+    return {defs,body:b};
+  }
+  function drawDoor(st){
+    const S=17, W=st.w*S, H=st.h*S, x0=(400-W)/2, y0=246-H, cas=9;
+    const art=doorArt(st,x0,y0,W,H);
+    let g=`<defs>${art.defs}
+      <linearGradient id="wallG" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ddd6c8"/><stop offset=".5" stop-color="#ebe5da"/><stop offset="1" stop-color="#d8d1c3"/></linearGradient>
+      <linearGradient id="eaveG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".28"/><stop offset="1" stop-color="#000" stop-opacity="0"/></linearGradient>
+      <linearGradient id="drvG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9b6ae"/><stop offset="1" stop-color="#9c9991"/></linearGradient>
+      <linearGradient id="hdrG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".45"/><stop offset="1" stop-color="#000" stop-opacity="0"/></linearGradient>
+      <radialGradient id="glowG"><stop offset="0" stop-color="#ffd98a" stop-opacity=".55"/><stop offset="1" stop-color="#ffd98a" stop-opacity="0"/></radialGradient></defs>`;
+    g+=`<rect width="400" height="246" fill="url(#wallG)"/>`;
+    for(let y=26;y<246;y+=11) g+=`<line x1="0" y1="${y}" x2="400" y2="${y}" stroke="#bfb7a7" stroke-width=".9"/><line x1="0" y1="${y+1}" x2="400" y2="${y+1}" stroke="#fff" stroke-opacity=".45" stroke-width=".7"/>`;
+    g+=`<rect width="400" height="16" fill="#3b3f45"/><rect y="14" width="400" height="4" fill="#f4f2ee"/><rect y="18" width="400" height="22" fill="url(#eaveG)"/>`;
+    // casing + opening
+    g+=`<rect x="${x0-cas}" y="${y0-cas}" width="${W+2*cas}" height="${H+cas}" fill="#faf8f4"/><rect x="${x0-cas}" y="${y0-cas}" width="${W+2*cas}" height="${H+cas}" fill="none" stroke="#c9c1b2"/>`;
+    g+=`<rect x="${x0-cas+2}" y="${y0+H}" width="${W+2*cas-4}" height="0" />`;
+    g+=art.body;
+    g+=`<rect x="${x0}" y="${y0}" width="${W}" height="9" fill="url(#hdrG)"/>`;
+    // coach lights
+    if(x0-cas>44){ [x0-cas-22,x0+W+cas+22].forEach(lx=>{const ly=y0+H*0.18;
+      g+=`<circle cx="${lx}" cy="${ly+12}" r="26" fill="url(#glowG)"/><rect x="${lx-1.5}" y="${ly-2}" width="3" height="5" fill="#1d1d1f"/><path d="M${lx-7} ${ly+3}h14l-2 3h-10z" fill="#1d1d1f"/><rect x="${lx-6}" y="${ly+6}" width="12" height="15" fill="#f6dc9a" stroke="#1d1d1f" stroke-width="2"/><path d="M${lx} ${ly+6}v15" stroke="#1d1d1f" stroke-width="1"/><path d="M${lx-8} ${ly+21}h16l-3 3h-10z" fill="#1d1d1f"/>`;}); }
+    // driveway
+    g+=`<path d="M0 246H400V270H0z" fill="url(#drvG)"/><path d="M${x0-cas} 246L${x0-cas-30} 270M${x0+W+cas} 246L${x0+W+cas+30} 270" stroke="#8d8a83" stroke-width="1"/><rect y="246" width="400" height="2" fill="#000" opacity=".18"/>`;
+    g+=`<text x="${x0+W/2}" y="${y0-cas-6}" text-anchor="middle" font-family="Inter,sans-serif" font-size="10.5" fill="#5f6670">${st.w}' × ${st.h}'</text>`;
     document.getElementById('doorSvg').innerHTML=g;
+  }
+  function drawThumbs(st){
+    document.querySelectorAll('#configure .chips[data-group="style"] label, #configure .chips[data-group="windows"] label').forEach(lab=>{
+      const inp=lab.querySelector('input'), grp=inp.name;
+      const s2=Object.assign({},st,{[grp]:inp.value}); s2.w=st.w>=12?16:9; s2.h=7;
+      const W=s2.w*6, H=s2.h*6, art=doorArt(s2,0,0,W,H);
+      let svg=lab.querySelector('svg.thumb');
+      if(!svg){ svg=document.createElementNS('http://www.w3.org/2000/svg','svg'); svg.setAttribute('class','thumb'); svg.setAttribute('aria-hidden','true'); lab.querySelector('span').prepend(svg); }
+      svg.setAttribute('viewBox',`-3 -3 ${W+6} ${H+6}`);
+      svg.innerHTML=`<defs>${art.defs}</defs><rect x="-3" y="-3" width="${W+6}" height="${H+6}" fill="#f1ede6"/>${art.body}`;
+    });
   }
   const cfgRows=st=>[
     ['Size · 尺寸',`${st.w}' × ${st.h}'${st.custom?' (custom)':''}`],
@@ -795,7 +850,7 @@
   const escH=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   function cfgUpdate(){
     document.getElementById('customSize').classList.toggle('show',pick('size')==='custom');
-    const st=cfgState(); drawDoor(st);
+    const st=cfgState(); drawDoor(st); drawThumbs(st);
     document.getElementById('cfgSummary').innerHTML=cfgRows(st).map(([k,v])=>`<li><b>${k}</b><span>${escH(v)}</span></li>`).join('');
   }
   cfgForm.addEventListener('change',cfgUpdate);
