@@ -435,6 +435,8 @@
             <label><input type="radio" name="windows" value="No windows" checked><span>None<small>无窗</small></span></label>
             <label><input type="radio" name="windows" value="Top row, plain glass"><span>Top row<small>顶排玻璃</small></span></label>
             <label><input type="radio" name="windows" value="Top row, decorative"><span>Decorative<small>装饰窗</small></span></label>
+            <label class="flush-only"><input type="radio" name="windows" value="Left side windows"><span>Left side<small>左侧窗</small></span></label>
+            <label class="flush-only"><input type="radio" name="windows" value="Right side windows"><span>Right side<small>右侧窗</small></span></label>
           </div>
         </fieldset>
         <fieldset>
@@ -752,7 +754,7 @@
       `<rect x="${x+bv}" y="${y+bv}" width="${w-2*bv}" height="${h-2*bv}" fill="${lt(.05)}"/>`+
       `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="${dk(.28)}" stroke-width=".8"/>`);
     const joints=()=>{let g='';for(let r=1;r<rows;r++){const y=y0+r*rh;g+=`<line x1="${x0}" y1="${y-.8}" x2="${x0+W}" y2="${y-.8}" stroke="${dk(.16)}" stroke-width="1"/><line x1="${x0}" y1="${y+.5}" x2="${x0+W}" y2="${y+.5}" stroke="${lt(LUM>0.6?.55:.18)}" stroke-width="1"/>`;}return g;};
-    const win=st.windows!=='No windows', deco=st.windows==='Top row, decorative';
+    const win=st.windows.startsWith('Top'), deco=st.windows==='Top row, decorative';
 
     if(st.style==='Full-view glass'){
       const cols=Math.max(3,Math.round(st.w/2.3)), cw=W/cols, fr=Math.max(3,W*0.013);
@@ -821,7 +823,12 @@
       } else if(st.style==='Modern flush'){
         // smooth flush sections: soft mottled sheen only, no grooves
         b+=`<rect x="${x0}" y="${y0}" width="${W}" height="${H}" filter="url(#${p}mot)" opacity="${LUM>0.6?.55:.10}"/>`;
-        if(win){
+        const side=st.windows.startsWith('Left')?'L':st.windows.startsWith('Right')?'R':'';
+        if(side){
+          const ww=Math.min(W*0.14,H*0.2), mx=Math.max(4,W*0.035), wh=rh*0.62;
+          const wx=side==='L'?x0+mx:x0+W-mx-ww;
+          for(let r=0;r<rows;r++) b+=glassPane(wx,y0+r*rh+(rh-wh)/2,ww,wh);
+        } else if(win){
           const n=Math.max(2,Math.round(st.w/2.1)), cw=W/n, wy=y0+rh*0.28, wh=rh*0.44;
           for(let c=0;c<n;c++){ b+=glassPane(x0+c*cw+cw*0.12,wy,cw*0.76,wh); if(deco) b+=`<path d="M${x0+c*cw+cw/2} ${wy}v${wh}" stroke="${base}" stroke-width="2"/>`; }
         }
@@ -876,6 +883,8 @@
   const escH=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   function cfgUpdate(){
     document.getElementById('customSize').classList.toggle('show',pick('size')==='custom');
+    const flush=pick('style')==='Modern flush';
+    cfgForm.querySelectorAll('.flush-only').forEach(l=>{ l.style.display=flush?'':'none'; if(!flush&&l.querySelector('input').checked) cfgForm.querySelector('input[name="windows"][value="No windows"]').checked=true; });
     const st=cfgState(); drawDoor(st); drawThumbs(st);
     document.getElementById('cfgSummary').innerHTML=cfgRows(st).map(([k,v])=>`<li><b>${k}</b><span>${escH(v)}</span></li>`).join('');
   }
