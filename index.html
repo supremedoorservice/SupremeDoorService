@@ -159,10 +159,22 @@
   @media (max-width:960px){.review-grid{grid-template-columns:repeat(2,1fr)}}
   @media (max-width:760px){.review-grid{grid-template-columns:1fr}}
 
+  .contact{padding:72px 0}
+  .contact-info .section-head{margin-bottom:24px}
+  .contact-info .section-head h2{font-size:clamp(28px,2.7vw,36px);white-space:nowrap}
+  @media (max-width:420px){.contact-info .section-head h2{white-space:normal}}
+  .contact-info .ci{padding:14px 0}
+  .contact-info .ci:last-child{border-bottom:0}
+  #quoteForm{padding:26px 28px}
+  #quoteForm .field{margin-bottom:14px}
+  #quoteForm textarea{min-height:84px}
+  #quoteForm .tabs{margin-bottom:16px}
+  @media (max-width:960px){.contact-grid{grid-template-columns:1fr;gap:28px}}
+  @media (max-width:760px){.contact{padding:56px 0}#quoteForm{padding:20px}#contact .row,#configure .row{gap:0 16px}#contact .ci strong{font-size:15.5px;word-break:normal;overflow-wrap:anywhere}}
   /* Contact */
   .contact{background:var(--steel);color:#fff}
   .contact .section-head p{color:#a9b2bf}
-  .contact-grid{display:grid;grid-template-columns:1fr 1.3fr;gap:48px}
+  .contact-grid{display:grid;grid-template-columns:1fr 1.3fr;gap:48px;align-items:center}
   .contact-info a{text-decoration:none}
   .ci{display:flex;gap:16px;align-items:flex-start;padding:20px 0;border-bottom:1px solid var(--line)}
   .ci-icon{width:44px;height:44px;border-radius:50%;background:rgba(232,87,30,.15);display:grid;place-items:center;flex:none}
@@ -500,13 +512,13 @@
 
 <section class="contact" id="contact">
   <div class="wrap">
-    <div class="section-head">
+    <div class="contact-grid">
+      <div class="contact-info">
+        <div class="section-head">
       <div class="eyebrow">Get in touch</div>
       <h2>Contact us · 联系我们</h2>
       <p>Call for the fastest response, or send a request and we'll get back to you.</p>
-    </div>
-    <div class="contact-grid">
-      <div class="contact-info">
+        </div>
         <a class="ci" href="tel:4084611483">
           <span class="ci-icon"><svg width="20" height="20" style="color:#e8571e"><use href="#ico-phone"/></svg></span>
           <span><small>Phone · 电话</small><strong>408-461-1483</strong></span>
