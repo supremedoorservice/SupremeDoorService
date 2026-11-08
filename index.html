@@ -118,6 +118,7 @@
   .chips svg.thumb{display:block;width:100%;max-width:120px;height:auto;margin:0 auto 6px;border-radius:3px}
   .sub-opt{margin-top:14px;padding-top:14px;border-top:1px dashed #e2ded6}
   .sub-label{font-size:13px;font-weight:600;color:#555e6b;margin-bottom:8px}
+  .brand-tag{font-weight:500;color:#8a94a3}
   .custom-size{display:none;gap:12px;margin-top:12px;grid-template-columns:1fr 1fr}
   .custom-size.show{display:grid}
   .custom-size label{font-size:13px;font-weight:600}
@@ -434,28 +435,11 @@
         </fieldset>
         <fieldset>
           <legend><span>4</span>Color · 颜色</legend>
-          <div class="sub-label">Solid colors · 纯色</div>
-          <div class="swatches">
-            <label title="White"><input type="radio" name="color" value="White" data-hex="#f4f4f1" checked><span style="background:#f4f4f1"></span><small>White 白</small></label>
-            <label title="Almond"><input type="radio" name="color" value="Almond" data-hex="#e6dcc6"><span style="background:#e6dcc6"></span><small>Almond 杏</small></label>
-            <label title="Sandtone"><input type="radio" name="color" value="Sandtone" data-hex="#c9b48f"><span style="background:#c9b48f"></span><small>Sandtone 沙</small></label>
-            <label title="Gray"><input type="radio" name="color" value="Gray" data-hex="#8c9196"><span style="background:#8c9196"></span><small>Gray 灰</small></label>
-            <label title="Brown"><input type="radio" name="color" value="Brown" data-hex="#5b3d2b"><span style="background:#5b3d2b"></span><small>Brown 棕</small></label>
-            <label title="Black"><input type="radio" name="color" value="Black" data-hex="#24262a"><span style="background:#24262a"></span><small>Black 黑</small></label>
-          </div>
+          <div class="sub-label">Solid colors · 纯色 <small class="brand-tag" id="solidBrand"></small></div>
+          <div class="swatches" id="solidSwatches"></div>
           <div id="woodGroup">
-          <div class="sub-label" style="margin-top:16px">Woodtones · 木纹色 <small style="font-weight:500">(CHI)</small></div>
-          <div class="swatches wood-swatches">
-            <label title="Painted Woodtones (Classic)"><input type="radio" name="color" value="Painted Woodtones (Classic) (woodtone)" data-hex="#604133" data-grain="#44281b" data-light="#6d4e40" data-wood="1"><span class="wsw"></span><small>Painted Woodtones (Classic)<br>经典木纹漆</small></label>
-            <label title="Painted Woodtones (Modern)"><input type="radio" name="color" value="Painted Woodtones (Modern) (woodtone)" data-hex="#451a0a" data-grain="#220401" data-light="#572b19" data-wood="1"><span class="wsw"></span><small>Painted Woodtones (Modern)<br>现代木纹漆</small></label>
-            <label title="Carbon Oak"><input type="radio" name="color" value="Carbon Oak (woodtone)" data-hex="#515355" data-grain="#3c3e40" data-light="#616365" data-wood="1"><span class="wsw"></span><small>Carbon Oak<br>碳灰橡木</small></label>
-            <label title="Mahogany"><input type="radio" name="color" value="Mahogany (woodtone)" data-hex="#5b3e30" data-grain="#361b10" data-light="#705144" data-wood="1"><span class="wsw"></span><small>Mahogany<br>桃花心木</small></label>
-            <label title="Cedar"><input type="radio" name="color" value="Cedar (woodtone)" data-hex="#a07040" data-grain="#764e25" data-light="#aa7946" data-wood="1" data-fine="1"><span class="wsw"></span><small>Cedar<br>雪松</small></label>
-            <label title="Dark Oak"><input type="radio" name="color" value="Dark Oak (woodtone)" data-hex="#634a3c" data-grain="#452f24" data-light="#755948" data-wood="1"><span class="wsw"></span><small>Dark Oak<br>深橡木</small></label>
-            <label title="Driftwood"><input type="radio" name="color" value="Driftwood (woodtone)" data-hex="#7a7165" data-grain="#5c5449" data-light="#857d70" data-wood="1"><span class="wsw"></span><small>Driftwood<br>浮木灰</small></label>
-            <label title="Walnut"><input type="radio" name="color" value="Walnut (woodtone)" data-hex="#2f221b" data-grain="#1c120c" data-light="#3d3028" data-wood="1"><span class="wsw"></span><small>Walnut<br>胡桃木</small></label>
-            <label title="Natural Oak"><input type="radio" name="color" value="Natural Oak (woodtone)" data-hex="#c5b090" data-grain="#a99373" data-light="#cfba9b" data-wood="1"><span class="wsw"></span><small>Natural Oak<br>原色橡木</small></label>
-          </div>
+            <div class="sub-label" style="margin-top:16px">Woodtones · 木纹色 <small class="brand-tag" id="woodBrand"></small></div>
+            <div class="swatches wood-swatches" id="woodSwatches"></div>
           </div>
         </fieldset>
         <fieldset>
@@ -759,12 +743,6 @@
     return `<filter id="${p}wood" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency="${f}" numOctaves="3" seed="9"/><feColorMatrix type="matrix" values="0 0 0 0 ${g[0]}  0 0 0 0 ${g[1]}  0 0 0 0 ${g[2]}  0 0 0 2.2 -.95"/></filter>`+
       `<filter id="${p}woodL" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency="${f}" numOctaves="2" seed="23"/><feColorMatrix type="matrix" values="0 0 0 0 ${l[0]}  0 0 0 0 ${l[1]}  0 0 0 0 ${l[2]}  0 0 0 2 -.9"/></filter>`;
   }
-  // woodtone swatch circles
-  document.querySelectorAll('.wood-swatches label').forEach((lab,i)=>{
-    const d=lab.querySelector('input').dataset, p='sw'+i+'_';
-    const st={grain:d.grain,light:d.light,fine:!!d.fine};
-    lab.querySelector('.wsw').innerHTML=`<svg viewBox="0 0 44 44"><defs>${woodFilters(p,st)}</defs><rect width="44" height="44" fill="${d.hex}"/><rect width="44" height="44" filter="url(#${p}woodL)" opacity=".45"/><rect width="44" height="44" filter="url(#${p}wood)" opacity=".9"/></svg>`;
-  });
   let _uid=0;
   // Draws a door at (x0,y0) size W×H in px. Returns {defs, body}.
   function doorArt(st,x0,y0,W,H){
@@ -939,14 +917,39 @@
     ['Style · 款式',st.style],['Brand · 品牌',st.brand],['Color · 颜色',st.color],
     ['Windows · 窗户',st.windows],['Window size · 窗户尺寸',st.windows==='No windows'?'—':st.winsize],['Insulation · 保温',st.insulation],['Opener · 开门机',st.opener]];
   const escH=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  // ---- brand color palettes ----
+  const STD_SOLIDS=[["White","#f4f4f1","白"],["Almond","#e6dcc6","杏"],["Sandtone","#c9b48f","沙"],["Gray","#8c9196","灰"],["Brown","#5b3d2b","棕"],["Black","#24262a","黑"]];
+  const PALETTES={
+    'CHI':{solids:STD_SOLIDS,woods:[
+      ["Painted Woodtones (Classic)","#604133","#44281b","#6d4e40","经典木纹漆"],["Painted Woodtones (Modern)","#451a0a","#220401","#572b19","现代木纹漆"],
+      ["Carbon Oak","#515355","#3c3e40","#616365","碳灰橡木"],["Mahogany","#5b3e30","#361b10","#705144","桃花心木"],
+      ["Cedar","#a07040","#764e25","#aa7946","雪松",1],["Dark Oak","#634a3c","#452f24","#755948","深橡木"],
+      ["Driftwood","#7a7165","#5c5449","#857d70","浮木灰"],["Walnut","#2f221b","#1c120c","#3d3028","胡桃木"],["Natural Oak","#c5b090","#a99373","#cfba9b","原色橡木"]]},
+    'Clopay':{solids:[["Standard White","#f3f3f4","标准白"],["Almond","#f9f2e2","杏色"],["Desert Tan","#d0c8b2","沙漠棕"],["Sandtone","#a59c8d","沙色"],
+      ["Bronze","#716a63","古铜色"],["Chocolate","#382f18","巧克力色"],["Mocha Brown","#3f3931","摩卡棕"],["Hunter Green","#284c3a","猎人绿"],
+      ["Charcoal","#555453","炭灰"],["Iron Ore","#424241","铁矿灰"],["Black","#1c1b1a","黑"]],
+      woods:[["Cypress Medium","#8f6428","#6b4519","#a87a38","柏木中色"],["Cypress Cherry","#512e20","#36190f","#66392a","柏木樱桃色"],
+      ["Cypress Walnut","#482d17","#2e1a0b","#6a5039","柏木胡桃色"],["Cypress Slate","#484540","#23211e","#a3a09b","柏木石板灰"]]},
+    _default:{solids:STD_SOLIDS,woods:[]}
+  };
+  function renderColors(brand){
+    if(renderColors.brand===brand) return; renderColors.brand=brand;
+    const P=PALETTES[brand]||PALETTES._default;
+    const prev=(cfgForm.querySelector('input[name="color"]:checked')||{}).value;
+    document.getElementById('solidSwatches').innerHTML=P.solids.map(([n,hx,zh])=>
+      `<label title="${n}"><input type="radio" name="color" value="${n}" data-hex="${hx}"><span style="background:${hx}"></span><small>${n}<br>${zh}</small></label>`).join('');
+    document.getElementById('woodSwatches').innerHTML=P.woods.map(([n,hx,g,l,zh,fine],i)=>{
+      const p='sw'+brand.replace(/\W/g,'')+i+'_';
+      return `<label title="${n}"><input type="radio" name="color" value="${n} (woodtone)" data-hex="${hx}" data-grain="${g}" data-light="${l}" data-wood="1"${fine?' data-fine="1"':''}><span class="wsw"><svg viewBox="0 0 44 44"><defs>${woodFilters(p,{grain:g,light:l,fine:!!fine})}</defs><rect width="44" height="44" fill="${hx}"/><rect width="44" height="44" filter="url(#${p}woodL)" opacity=".45"/><rect width="44" height="44" filter="url(#${p}wood)" opacity=".9"/></svg></span><small>${n}<br>${zh}</small></label>`;}).join('');
+    document.getElementById('woodGroup').style.display=P.woods.length?'':'none';
+    const tag=PALETTES[brand]?`(${brand})`:''; document.getElementById('solidBrand').textContent=tag; document.getElementById('woodBrand').textContent=tag;
+    const keep=prev&&cfgForm.querySelector(`input[name="color"][value="${CSS.escape(prev)}"]`);
+    (keep||cfgForm.querySelector('input[name="color"]')).checked=true;
+  }
   function cfgUpdate(){
+    renderColors(pick('brand'));
     document.getElementById('customSize').classList.toggle('show',pick('size')==='custom');
     const flush=pick('style')==='Modern flush';
-    // woodtones are only offered for CHI doors
-    const chi=pick('brand')==='CHI';
-    document.getElementById('woodGroup').style.display=chi?'':'none';
-    const cc=cfgForm.querySelector('input[name="color"]:checked');
-    if(!chi&&cc&&cc.dataset.wood) cfgForm.querySelector('input[name="color"][value="White"]').checked=true;
     const shortOk=pick('style')==='Raised short panel';
     // default the window size to match the panel: short panel -> short windows
     if(pick('style')!==cfgUpdate.lastStyle){ cfgForm.querySelector(`input[name="winsize"][value="${shortOk?'Short':'Long'} windows"]`).checked=true; cfgUpdate.lastStyle=pick('style'); }
