@@ -454,9 +454,9 @@
           <div class="sub-opt" id="winSizeRow">
             <div class="sub-label">Window size · 窗户尺寸</div>
             <div class="chips" data-group="winsize">
-              <label><input type="radio" name="winsize" value="Long windows" checked><span>Long windows<small>长窗</small></span></label>
+              <label class="long-only"><input type="radio" name="winsize" value="Long windows" checked><span>Long windows<small>长窗</small></span></label>
               <label class="short-only"><input type="radio" name="winsize" value="Short windows"><span>Short windows<small>短窗</small></span></label>
-              <label class="slim-only"><input type="radio" name="winsize" value="Slim long windows (1/3 height)"><span>Slim long windows<small>细长窗（1/3 高）</small></span></label>
+              <label class="slim-only"><input type="radio" name="winsize" value="Slim long windows"><span>Slim long windows<small>细长窗</small></span></label>
             </div>
           </div>
         </fieldset>
@@ -954,8 +954,9 @@
     const flush=pick('style')==='Modern flush';
     const shortOk=pick('style')==='Raised short panel';
     // default the window size to match the panel: short panel -> short windows
-    if(pick('style')!==cfgUpdate.lastStyle){ cfgForm.querySelector(`input[name="winsize"][value="${shortOk?'Short':'Long'} windows"]`).checked=true; cfgUpdate.lastStyle=pick('style'); }
+    if(pick('style')!==cfgUpdate.lastStyle){ cfgForm.querySelector(`input[name="winsize"][value="${pick('style')==='Modern flush'?'Slim long':shortOk?'Short':'Long'} windows"]`).checked=true; cfgUpdate.lastStyle=pick('style'); }
     const flushOk=pick('style')==='Modern flush';
+    cfgForm.querySelectorAll('.long-only').forEach(l=>{ l.style.display=flushOk?'none':''; if(flushOk&&l.querySelector('input').checked) cfgForm.querySelector('input[name="winsize"][value="Slim long windows"]').checked=true; });
     cfgForm.querySelectorAll('.slim-only').forEach(l=>{ l.style.display=flushOk?'':'none'; if(!flushOk&&l.querySelector('input').checked) cfgForm.querySelector('input[name="winsize"][value="Long windows"]').checked=true; });
     cfgForm.querySelectorAll('.short-only').forEach(l=>{ l.style.display=shortOk?'':'none'; if(!shortOk&&l.querySelector('input').checked) cfgForm.querySelector('input[name="winsize"][value="Long windows"]').checked=true; });
     cfgForm.querySelectorAll('.flush-only').forEach(l=>{ l.style.display=flush?'':'none'; if(!flush&&l.querySelector('input').checked) cfgForm.querySelector('input[name="windows"][value="No windows"]').checked=true; });
