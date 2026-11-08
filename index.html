@@ -422,12 +422,14 @@
           </div>
         </fieldset>
         <fieldset>
-          <legend><span>3</span>Material · 材质</legend>
-          <div class="chips" data-group="material">
-            <label><input type="radio" name="material" value="Steel" checked><span>Steel<small>钢</small></span></label>
-            <label><input type="radio" name="material" value="Aluminum"><span>Aluminum<small>铝</small></span></label>
-            <label><input type="radio" name="material" value="Wood"><span>Wood<small>实木</small></span></label>
-            <label><input type="radio" name="material" value="Wood-look composite"><span>Wood-look<small>仿木</small></span></label>
+          <legend><span>3</span>Brand · 品牌</legend>
+          <div class="chips" data-group="brand">
+            <label><input type="radio" name="brand" value="Best value (our pick)" checked><span>Best value<small>最高性价比（推荐）</small></span></label>
+            <label><input type="radio" name="brand" value="Clopay"><span>Clopay<small>&nbsp;</small></span></label>
+            <label><input type="radio" name="brand" value="CHI"><span>CHI<small>&nbsp;</small></span></label>
+            <label><input type="radio" name="brand" value="Hörmann"><span>Hörmann<small>&nbsp;</small></span></label>
+            <label><input type="radio" name="brand" value="Amarr"><span>Amarr<small>&nbsp;</small></span></label>
+            <label><input type="radio" name="brand" value="Other US manufacturer"><span>Other US brand<small>其他美国品牌</small></span></label>
           </div>
         </fieldset>
         <fieldset>
@@ -745,7 +747,7 @@
     else [w,h]=sz.split('x').map(Number);
     w=Math.min(20,Math.max(6,w)); h=Math.min(10,Math.max(6,h));
     const col=cfgForm.querySelector('input[name="color"]:checked');
-    return {w,h,custom:sz==='custom',style:pick('style'),material:pick('material'),color:col.value,hex:col.dataset.hex,wood:!!col.dataset.wood,grain:col.dataset.grain||'#2a160b',light:col.dataset.light||'#ffffff',fine:!!col.dataset.fine,
+    return {w,h,custom:sz==='custom',style:pick('style'),brand:pick('brand'),color:col.value,hex:col.dataset.hex,wood:!!col.dataset.wood,grain:col.dataset.grain||'#2a160b',light:col.dataset.light||'#ffffff',fine:!!col.dataset.fine,
       windows:pick('windows'),winsize:pick('winsize')||'Long windows',insulation:pick('insulation'),opener:pick('opener'),
       extras:[...cfgForm.querySelectorAll('input[name="extras"]:checked')].map(e=>e.value)};
   };
@@ -932,7 +934,7 @@
   }
   const cfgRows=st=>[
     ['Size · 尺寸',`${st.w}' × ${st.h}'${st.custom?' (custom)':''}`],
-    ['Style · 款式',st.style],['Material · 材质',st.material],['Color · 颜色',st.color],
+    ['Style · 款式',st.style],['Brand · 品牌',st.brand],['Color · 颜色',st.color],
     ['Windows · 窗户',st.windows],['Window size · 窗户尺寸',st.windows==='No windows'?'—':st.winsize],['Insulation · 保温',st.insulation],['Opener · 开门机',st.opener]];
   const escH=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   function cfgUpdate(){
