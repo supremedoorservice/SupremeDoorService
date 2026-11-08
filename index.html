@@ -429,7 +429,7 @@
             <label><input type="radio" name="brand" value="CHI"><span>CHI<small>&nbsp;</small></span></label>
             <label><input type="radio" name="brand" value="Hörmann"><span>Hörmann<small>&nbsp;</small></span></label>
             <label><input type="radio" name="brand" value="Amarr"><span>Amarr<small>&nbsp;</small></span></label>
-            <label><input type="radio" name="brand" value="Other US manufacturer"><span>Other US brand<small>其他美国品牌</small></span></label>
+            <label><input type="radio" name="brand" value="Other U.S. manufacturers"><span>Other U.S. Manufacturers<small>其他美国厂商</small></span></label>
           </div>
         </fieldset>
         <fieldset>
@@ -443,7 +443,8 @@
             <label title="Brown"><input type="radio" name="color" value="Brown" data-hex="#5b3d2b"><span style="background:#5b3d2b"></span><small>Brown 棕</small></label>
             <label title="Black"><input type="radio" name="color" value="Black" data-hex="#24262a"><span style="background:#24262a"></span><small>Black 黑</small></label>
           </div>
-          <div class="sub-label" style="margin-top:16px">Woodtones · 木纹色</div>
+          <div id="woodGroup">
+          <div class="sub-label" style="margin-top:16px">Woodtones · 木纹色 <small style="font-weight:500">(CHI)</small></div>
           <div class="swatches wood-swatches">
             <label title="Painted Woodtones (Classic)"><input type="radio" name="color" value="Painted Woodtones (Classic) (woodtone)" data-hex="#604133" data-grain="#44281b" data-light="#6d4e40" data-wood="1"><span class="wsw"></span><small>Painted Woodtones (Classic)<br>经典木纹漆</small></label>
             <label title="Painted Woodtones (Modern)"><input type="radio" name="color" value="Painted Woodtones (Modern) (woodtone)" data-hex="#451a0a" data-grain="#220401" data-light="#572b19" data-wood="1"><span class="wsw"></span><small>Painted Woodtones (Modern)<br>现代木纹漆</small></label>
@@ -454,6 +455,7 @@
             <label title="Driftwood"><input type="radio" name="color" value="Driftwood (woodtone)" data-hex="#7a7165" data-grain="#5c5449" data-light="#857d70" data-wood="1"><span class="wsw"></span><small>Driftwood<br>浮木灰</small></label>
             <label title="Walnut"><input type="radio" name="color" value="Walnut (woodtone)" data-hex="#2f221b" data-grain="#1c120c" data-light="#3d3028" data-wood="1"><span class="wsw"></span><small>Walnut<br>胡桃木</small></label>
             <label title="Natural Oak"><input type="radio" name="color" value="Natural Oak (woodtone)" data-hex="#c5b090" data-grain="#a99373" data-light="#cfba9b" data-wood="1"><span class="wsw"></span><small>Natural Oak<br>原色橡木</small></label>
+          </div>
           </div>
         </fieldset>
         <fieldset>
@@ -940,6 +942,11 @@
   function cfgUpdate(){
     document.getElementById('customSize').classList.toggle('show',pick('size')==='custom');
     const flush=pick('style')==='Modern flush';
+    // woodtones are only offered for CHI doors
+    const chi=pick('brand')==='CHI';
+    document.getElementById('woodGroup').style.display=chi?'':'none';
+    const cc=cfgForm.querySelector('input[name="color"]:checked');
+    if(!chi&&cc&&cc.dataset.wood) cfgForm.querySelector('input[name="color"][value="White"]').checked=true;
     const shortOk=pick('style')==='Raised short panel';
     // default the window size to match the panel: short panel -> short windows
     if(pick('style')!==cfgUpdate.lastStyle){ cfgForm.querySelector(`input[name="winsize"][value="${shortOk?'Short':'Long'} windows"]`).checked=true; cfgUpdate.lastStyle=pick('style'); }
