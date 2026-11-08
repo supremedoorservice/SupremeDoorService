@@ -446,8 +446,8 @@
           <legend><span>5</span>Windows · 窗户</legend>
           <div class="chips" data-group="windows">
             <label><input type="radio" name="windows" value="No windows" checked><span>None<small>无窗</small></span></label>
-            <label><input type="radio" name="windows" value="Top row, plain glass"><span>Top row<small>顶排玻璃</small></span></label>
-            <label><input type="radio" name="windows" value="Top row, decorative"><span>Decorative<small>装饰窗</small></span></label>
+            <label class="top-opt"><input type="radio" name="windows" value="Top row, plain glass"><span>Top row<small>顶排玻璃</small></span></label>
+            <label class="top-opt"><input type="radio" name="windows" value="Top row, decorative"><span>Decorative<small>装饰窗</small></span></label>
             <label class="flush-only"><input type="radio" name="windows" value="Left side windows"><span>Left side<small>左侧窗</small></span></label>
             <label class="flush-only"><input type="radio" name="windows" value="Right side windows"><span>Right side<small>右侧窗</small></span></label>
           </div>
@@ -959,6 +959,9 @@
     cfgForm.querySelectorAll('.slim-only').forEach(l=>{ l.style.display=flushOk?'':'none'; if(!flushOk&&l.querySelector('input').checked) cfgForm.querySelector('input[name="winsize"][value="Long windows"]').checked=true; });
     cfgForm.querySelectorAll('.short-only').forEach(l=>{ l.style.display=shortOk?'':'none'; if(!shortOk&&l.querySelector('input').checked) cfgForm.querySelector('input[name="winsize"][value="Long windows"]').checked=true; });
     cfgForm.querySelectorAll('.flush-only').forEach(l=>{ l.style.display=flush?'':'none'; if(!flush&&l.querySelector('input').checked) cfgForm.querySelector('input[name="windows"][value="No windows"]').checked=true; });
+    // slim long windows on modern flush are side-only: hide top-row options
+    const slimSel=flushOk&&pick('winsize')==='Slim long windows';
+    cfgForm.querySelectorAll('.top-opt').forEach(l=>{ l.style.display=slimSel?'none':''; if(slimSel&&l.querySelector('input').checked) cfgForm.querySelector('input[name="windows"][value="Left side windows"]').checked=true; });
     document.getElementById('winSizeRow').style.display=pick('windows')==='No windows'?'none':'';
     const st=cfgState(); drawDoor(st); drawThumbs(st);
     document.getElementById('cfgSummary').innerHTML=cfgRows(st).map(([k,v])=>`<li><b>${k}</b><span>${escH(v)}</span></li>`).join('');
