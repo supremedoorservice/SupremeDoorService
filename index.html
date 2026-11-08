@@ -89,7 +89,9 @@
   .stat span{font-size:14px;color:#555e6b}
 
   /* Door configurator */
-  .config{background:var(--paper);border-top:1px solid #e2ded6}
+  .config{background:var(--paper);padding-top:48px}
+  #services{padding-bottom:40px}
+  @media (max-width:760px){.config{padding-top:32px}#services{padding-bottom:28px}}
   .cfg-grid{display:grid;grid-template-columns:1fr 1.15fr;gap:40px;align-items:start}
   .cfg-preview{position:sticky;top:96px}
   .cfg-stage{background:linear-gradient(#cfd8e0,#e9eef2 70%);border-radius:10px;overflow:hidden;border:1px solid #d9d4ca}
